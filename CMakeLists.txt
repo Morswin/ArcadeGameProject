@@ -53,8 +53,3 @@ if (WIN32)
             VERBATIM
     )
 endif()
-
-# apparently macOS needs additionally framework for OpenGL
-if(APPLE)
-    target_link_libraries(SDL3_GLAD_Triangle PRIVATE "-framework OpenGL")
-endif()

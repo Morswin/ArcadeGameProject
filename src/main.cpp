@@ -51,7 +51,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     window = SDL_CreateWindow("Hello OpenGL Triangle", 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (!window) {
-        SDL_Log("Failed to vreate window: %s", SDL_GetError());
+        SDL_Log("Failed to create window: %s", SDL_GetError());
         SDL_Quit();
         return SDL_APP_FAILURE;
     }
@@ -113,7 +113,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     glDeleteShader(fragmentShader);
 
     // Background color
-    glClearColor(0.1, 0.1, 0.1, 1.0);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
     return SDL_APP_CONTINUE;
 }
@@ -145,4 +145,5 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(shaderProgram);
+    SDL_GL_DestroyContext(glContext);
 }
