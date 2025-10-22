@@ -29,20 +29,17 @@ else()
     message(STATUS "Using local SDL3")
 endif()
 
-## Download SDL3
-#FetchContent_Declare(
-#        SDL3
-#        GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-#        GIT_TAG main
-#)
-
-add_executable(ArcadeGameProject main.cpp)
+add_executable(ArcadeGameProject
+    src/main.cpp
+    src/glad.c
+    )
 
 # Link against SDL3
 #target_link_libraries(ArcadeGameProject PRIVATE SDL3::SDL3-static)
 
 # set the include directory
 target_include_directories(ArcadeGameProject PUBLIC ${SDL3_INCLUDE_DIRS})
+target_include_directories(ArcadeGameProject PRIVATE include/)
 
 target_compile_definitions(ArcadeGameProject PRIVATE SDL_MAIN_USE_CALLBACKS)
 
@@ -55,4 +52,9 @@ if (WIN32)
             COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL3::SDL3>" "$<TARGET_FILE_DIR:ArcadeGameProject>"
             VERBATIM
     )
+endif()
+
+# apparently macOS needs additionally framework for OpenGL
+if(APPLE)
+    target_link_libraries(SDL3_GLAD_Triangle PRIVATE "-framework OpenGL")
 endif()

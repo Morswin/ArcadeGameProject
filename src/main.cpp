@@ -1,0 +1,148 @@
+#define SDL_MAIN_USE_CALLBACKS 1
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <glad/glad.h>
+#include <iostream>
+
+static const char* vertexShaderSource = R"(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+void main()
+{
+    gl_Position = vec4(aPos, 1.0);
+}
+)";
+
+static const char* fragmentShaderSource = R"(
+#version 330 core
+out vec4 FragColor;
+void main()
+{
+    FragColor = vec4(1.0, 0.5, 0.2, 1.0);
+}
+)";
+
+static SDL_Window* window = nullptr;
+static SDL_GLContext glContext;
+static GLuint VAO, VBO, vertexShader, fragmentShader, shaderProgram;
+
+void CheckShaderCompile(GLuint shader, const char* name) {
+    GLint success;
+    GLchar infoLog[512];
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+        std::cerr << "Error compiling " << name << ":\n" << infoLog << std::endl;
+    }
+}
+
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
+{
+    SDL_SetAppMetadata("ArcadeGameProject", "0.1", "ArcadeGameProject");
+
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+    window = SDL_CreateWindow("Hello OpenGL Triangle", 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    if (!window) {
+        SDL_Log("Failed to vreate window: %s", SDL_GetError());
+        SDL_Quit();
+        return SDL_APP_FAILURE;
+    }
+
+    glContext = SDL_GL_CreateContext(window);
+    if (!glContext) {
+        SDL_Log("Failed to create GL context: %s", SDL_GetError());
+        SDL_Quit();
+        return SDL_APP_FAILURE;
+    }
+
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+        SDL_Log("Failed initialize GLAD");
+        SDL_Quit();
+        return SDL_APP_FAILURE;
+    }
+
+    glViewport(0, 0, 800, 600);
+    float vertices[] = {
+        0.0f,  0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f
+    };
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
+    glCompileShader(vertexShader);
+    CheckShaderCompile(vertexShader, "vertex shader");
+
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
+    glCompileShader(fragmentShader);
+    CheckShaderCompile(fragmentShader, "fragment shader");
+
+    shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    GLint success;
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        GLchar infoLog[512];
+        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
+        std::cerr << "Error linking shader program:\n" << infoLog << std::endl;
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    // Background color
+    glClearColor(0.1, 0.1, 0.1, 1.0);
+
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
+{
+    if (event->type == SDL_EVENT_QUIT) {
+        return SDL_APP_SUCCESS;
+    }
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppIterate(void *appstate)
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(shaderProgram);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    SDL_GL_SwapWindow(window);
+
+    return SDL_APP_CONTINUE;
+}
+
+void SDL_AppQuit(void *appstate, SDL_AppResult result)
+{
+    /* SDL will clean up the window/renderer for us. */
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteProgram(shaderProgram);
+}
