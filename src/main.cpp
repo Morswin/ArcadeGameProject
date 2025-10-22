@@ -120,9 +120,16 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 {
-    if (event->type == SDL_EVENT_QUIT) {
+    switch (event->type) {
+    case SDL_EVENT_QUIT:
         return SDL_APP_SUCCESS;
+        break;
+    case SDL_EVENT_WINDOW_RESIZED:
+        glViewport(0, 0, event->window.data1, event->window.data2);
+        break;
     }
+    // For now I don't see a reason to handle the default.
+    // I only want to handle specific events. Not all of them.
     return SDL_APP_CONTINUE;
 }
 
