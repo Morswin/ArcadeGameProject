@@ -1,1 +1,2 @@
-Project under construction. 
+# Project under construction. 
+For more interesting details, see **GDD.md**
