@@ -3,6 +3,19 @@ project(ArcadeGameProject)
 
 set(CMAKE_CXX_STANDARD 20)
 
+# Path to shader directory
+set(SHADER_DIR ${CMAKE_SOURCE_DIR}/shaders/)
+# List of all shaders present there
+file(GLOB SHADERS ${SHADER_DIR}/*)
+# Subdirectory for shaders in build directory
+set(SHADER_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/shaders)
+# Command for copying shaders
+add_custom_target(copy_shaders ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${SHADER_DIR} ${SHADER_OUTPUT_DIR}
+    COMMENT "Copying shader files to shader subdirectory in build directory."
+)
+
 # Enables FetchContent
 include(FetchContent)
 
@@ -45,6 +58,9 @@ target_compile_definitions(ArcadeGameProject PRIVATE SDL_MAIN_USE_CALLBACKS)
 
 # link all libraries to the project
 target_link_libraries(ArcadeGameProject PRIVATE SDL3::SDL3)
+
+# Perform the copy of shaders to build subdirectory
+add_dependencies(ArcadeGameProject copy_shaders)
 
 if (WIN32)
     add_custom_command(

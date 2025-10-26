@@ -71,9 +71,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     glViewport(0, 0, 800, 600);
     float vertices[] = {
-        0.0f,  0.5f, 0.0f,
+         0.0f,  0.5f, 0.0f,
         -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f
+         0.5f, -0.5f, 0.0f
     };
 
     glGenVertexArrays(1, &VAO);
