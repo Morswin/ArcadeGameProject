@@ -3,24 +3,38 @@
 #include <SDL3/SDL_main.h>
 #include <glad/glad.h>
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
 
-static const char* vertexShaderSource = R"(
-#version 330 core
-layout (location = 0) in vec3 aPos;
-void main()
-{
-    gl_Position = vec4(aPos, 1.0);
-}
-)";
 
-static const char* fragmentShaderSource = R"(
-#version 330 core
-out vec4 FragColor;
-void main()
-{
-    FragColor = vec4(1.0, 0.5, 0.2, 1.0);
+struct ShaderProgramSource {
+    std::string vertesSourceProgram;
+    std::string fragmentSourceProgram;
+};
+
+static ShaderProgramSource parseShader(const std::string& filepath) {
+    std::ifstream stream(filepath);
+    enum class ShaderType { NONE=-1, VERTEX=0, FRAGMENT=1 };
+    std::string line;
+    std::stringstream ss[2];
+    ShaderType type = ShaderType::NONE;
+    while ( getline(stream, line) ) {
+        if (line.find("#shader") != std::string::npos) {
+            if (line.find("vertex") != std::string::npos) {
+                type = ShaderType::VERTEX;
+            }
+            else if (line.find("fragment") != std::string::npos) {
+                type = ShaderType::FRAGMENT;
+            }
+        }
+        else {
+            ss[(int)type] << line << "\n";
+        }
+    }
+    std::cout << ss[0].str();
+    return { ss[0].str(), ss[1].str() };
 }
-)";
 
 static SDL_Window* window = nullptr;
 static SDL_GLContext glContext;
@@ -85,6 +99,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    ShaderProgramSource source = parseShader("shaders/basic.glsl");
+    const char* vertexShaderSource = source.vertesSourceProgram.c_str();
+    const char* fragmentShaderSource = source.fragmentSourceProgram.c_str();
 
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
