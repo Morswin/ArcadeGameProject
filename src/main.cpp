@@ -9,7 +9,7 @@
 
 
 struct ShaderProgramSource {
-    std::string vertesSourceProgram;
+    std::string vertexSourceProgram;
     std::string fragmentSourceProgram;
 };
 
@@ -32,7 +32,6 @@ static ShaderProgramSource parseShader(const std::string& filepath) {
             ss[(int)type] << line << "\n";
         }
     }
-    std::cout << ss[0].str();
     return { ss[0].str(), ss[1].str() };
 }
 
@@ -101,7 +100,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     glEnableVertexAttribArray(0);
 
     ShaderProgramSource source = parseShader("shaders/basic.glsl");
-    const char* vertexShaderSource = source.vertesSourceProgram.c_str();
+    const char* vertexShaderSource = source.vertexSourceProgram.c_str();
     const char* fragmentShaderSource = source.fragmentSourceProgram.c_str();
 
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
