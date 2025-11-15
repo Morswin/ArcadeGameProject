@@ -37,7 +37,7 @@ static ShaderProgramSource parseShader(const std::string& filepath) {
 
 static SDL_Window* window = nullptr;
 static SDL_GLContext glContext;
-static GLuint VAO, VBO, vertexShader, fragmentShader, shaderProgram;
+static GLuint VAO, VBO, EBO, vertexShader, fragmentShader, shaderProgram;
 
 void CheckShaderCompile(GLuint shader, const char* name) {
     GLint success;
@@ -83,18 +83,32 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     }
 
     glViewport(0, 0, 800, 600);
+
+    /* Data for VBO */
     float vertices[] = {
-         0.0f,  0.5f, 0.0f,
+         0.5f,  0.5f, 0.0f,
         -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f
+         0.5f, -0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f
+    };
+
+    /* Data for EBO */
+    unsigned int elements[] = {
+        0, 1, 2,
+        1, 0, 3
     };
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
+
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -156,7 +170,8 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     SDL_GL_SwapWindow(window);
 
