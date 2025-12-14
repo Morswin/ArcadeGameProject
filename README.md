@@ -9,3 +9,4 @@ For more interesting details, see **GDD.md**
 - [ ] Add entity and wall collisions
 ## Optional
 - [ ] Maybe it's a good idea to use glm or other already existing library to handle 2d vectors
+- [ ] Tidy up the makelists.txt and the directory/file structure
