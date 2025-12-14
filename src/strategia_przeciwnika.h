@@ -1,0 +1,11 @@
+#ifndef ARCADEGAMEPROJECT_STRATEGIA_PRZECIWNIKA_H
+#define ARCADEGAMEPROJECT_STRATEGIA_PRZECIWNIKA_H
+
+enum class StrategiaPrzeciwnika
+{
+    Blakanie,
+    Szukanie,
+    Atakowanie
+};
+
+#endif //ARCADEGAMEPROJECT_STRATEGIA_PRZECIWNIKA_H

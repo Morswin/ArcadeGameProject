@@ -45,7 +45,22 @@ endif()
 add_executable(ArcadeGameProject
     src/main.cpp
     src/glad.c
-    )
+        src/mapa.h
+        src/gra.h
+        src/element_gry.h
+        src/wektor_2d.h
+        src/otoczenie.h
+        src/byt.h
+        src/gracz.h
+        src/zdobycz.h
+        src/ustawienia.h
+        src/sciana.h
+        src/podloga.h
+        src/strategia_przeciwnika.h
+        src/przeciwnik.h
+        src/pocisk.h
+        src/pocisk_dekorator.h
+)
 
 # Link against SDL3
 #target_link_libraries(ArcadeGameProject PRIVATE SDL3::SDL3-static)
