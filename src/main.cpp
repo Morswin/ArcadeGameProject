@@ -38,6 +38,8 @@ static ShaderProgramSource parseShader(const std::string& filepath) {
 static SDL_Window* window = nullptr;
 static SDL_GLContext glContext;
 static GLuint VAO, VBO, EBO, vertexShader, fragmentShader, shaderProgram;
+static unsigned int fps = 0;
+static unsigned int lastDeltaTime = 0;
 
 void CheckShaderCompile(GLuint shader, const char* name) {
     GLint success;
@@ -81,6 +83,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         SDL_Quit();
         return SDL_APP_FAILURE;
     }
+
+    SDL_GL_SetSwapInterval(1);  // VSync = 1, uncapped = 0, adaprive VSync = -1 (if supported)
 
     glViewport(0, 0, 800, 600);
 
@@ -166,6 +170,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
+    unsigned int tickStartTime = SDL_GetTicks();
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(shaderProgram);
@@ -175,6 +180,14 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     SDL_GL_SwapWindow(window);
 
+    fps++;
+    unsigned int deltaTime = SDL_GetTicks() - tickStartTime;
+    if (tickStartTime > lastDeltaTime + 1000) {
+        lastDeltaTime = tickStartTime;
+        std::string title = "FPS: " + std::to_string(fps);
+        SDL_SetWindowTitle(window, title.c_str());
+        fps = 0;
+    }
     return SDL_APP_CONTINUE;
 }
 
