@@ -2,7 +2,6 @@
 #define RENDERER_H
 
 #include <glad/glad.h>
-#include <iostream>
 
 #define GLCall(x) GLClearError();\
     x;\

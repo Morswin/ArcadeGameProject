@@ -60,6 +60,13 @@ add_executable(ArcadeGameProject
     src/przeciwnik.h
     src/pocisk.h
     src/pocisk_dekorator.h
+
+    src/element_buffer.h
+    src/element_buffer.cpp
+    src/renderer.h
+    src/renderer.cpp
+    src/vertex_buffer.h
+    src/vertex_buffer.cpp
 )
 
 # Link against SDL3

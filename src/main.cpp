@@ -8,6 +8,8 @@
 #include <sstream>
 
 #include "renderer.h"
+#include "vertex_buffer.h"
+#include "element_buffer.h"
 
 struct ShaderProgramSource {
     std::string vertexSourceProgram;
@@ -38,16 +40,18 @@ static ShaderProgramSource parseShader(const std::string& filepath) {
 
 static SDL_Window* window = nullptr;
 static SDL_GLContext glContext;
-static GLuint VAO, VBO, EBO, vertexShader, fragmentShader, shaderProgram;
+static GLuint VAO, vertexShader, fragmentShader, shaderProgram;
 static unsigned int fps = 0;
 static unsigned int lastDeltaTime = 0;
+static VertexBuffer* vb = nullptr;
+static ElementBuffer* eb = nullptr;
 
 void CheckShaderCompile(GLuint shader, const char* name) {
     GLint success;
     GLchar infoLog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    GLCall(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
     if (!success) {
-        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+        GLCall(glGetShaderInfoLog(shader, 512, nullptr, infoLog));
         std::cerr << "Error compiling " << name << ":\n" << infoLog << std::endl;
     }
 }
@@ -87,7 +91,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     SDL_GL_SetSwapInterval(1);  // VSync = 1, uncapped = 0, adaprive VSync = -1 (if supported)
 
-    glViewport(0, 0, 800, 600);
+    GLCall(glViewport(0, 0, 800, 600));
 
     /* Data for VBO */
     float vertices[] = {
@@ -103,53 +107,50 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         1, 0, 3
     };
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    GLCall(glGenVertexArrays(1, &VAO));
+    GLCall(glBindVertexArray(VAO));
 
-    glBindVertexArray(VAO);
+    // VBO
+    vb = new VertexBuffer(vertices, sizeof(vertices));
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // EBO
+    eb = new ElementBuffer(elements, 6);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
+    GLCall(glEnableVertexAttribArray(0));
 
     ShaderProgramSource source = parseShader("shaders/basic.glsl");
     const char* vertexShaderSource = source.vertexSourceProgram.c_str();
     const char* fragmentShaderSource = source.fragmentSourceProgram.c_str();
 
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
-    glCompileShader(vertexShader);
+    GLCall(glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr));
+    GLCall(glCompileShader(vertexShader));
     CheckShaderCompile(vertexShader, "vertex shader");
 
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
-    glCompileShader(fragmentShader);
+    GLCall(glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr));
+    GLCall(glCompileShader(fragmentShader));
     CheckShaderCompile(fragmentShader, "fragment shader");
 
     shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
+    GLCall(glAttachShader(shaderProgram, vertexShader));
+    GLCall(glAttachShader(shaderProgram, fragmentShader));
+    GLCall(glLinkProgram(shaderProgram));
 
     GLint success;
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    GLCall(glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success));
     if (!success) {
         GLchar infoLog[512];
-        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
+        GLCall(glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog));
         std::cerr << "Error linking shader program:\n" << infoLog << std::endl;
     }
 
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    GLCall(glDeleteShader(vertexShader));
+    GLCall(glDeleteShader(fragmentShader));
 
     // Background color
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
 
     return SDL_APP_CONTINUE;
 }
@@ -161,7 +162,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         return SDL_APP_SUCCESS;
         break;
     case SDL_EVENT_WINDOW_RESIZED:
-        glViewport(0, 0, event->window.data1, event->window.data2);
+        GLCall(glViewport(0, 0, event->window.data1, event->window.data2));
         break;
     }
     // For now I don't see a reason to handle the default.
@@ -172,12 +173,13 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
     unsigned int tickStartTime = SDL_GetTicks();
-    glClear(GL_COLOR_BUFFER_BIT);
+    GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-    glUseProgram(shaderProgram);
-    glBindVertexArray(VAO);
+
+    GLCall(glUseProgram(shaderProgram));
+    GLCall(glBindVertexArray(VAO));
     // glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
     SDL_GL_SwapWindow(window);
 
@@ -195,8 +197,10 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
     /* SDL will clean up the window/renderer for us. */
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
+    // glDeleteBuffers(1, &VBO);
+    delete eb;
+    delete vb;
+    GLCall(glDeleteVertexArrays(1, &VAO));
+    GLCall(glDeleteProgram(shaderProgram));
     SDL_GL_DestroyContext(glContext);
 }
