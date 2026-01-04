@@ -10,6 +10,7 @@
 #include "renderer.h"
 #include "vertex_buffer.h"
 #include "element_buffer.h"
+#include "vertex_array.h"
 
 struct ShaderProgramSource {
     std::string vertexSourceProgram;
@@ -40,11 +41,12 @@ static ShaderProgramSource parseShader(const std::string& filepath) {
 
 static SDL_Window* window = nullptr;
 static SDL_GLContext glContext;
-static GLuint VAO, vertexShader, fragmentShader, shaderProgram;
-static unsigned int fps = 0;
-static unsigned int lastDeltaTime = 0;
+static unsigned int VAO, vertexShader, fragmentShader, shaderProgram;
 static VertexBuffer* vb = nullptr;
 static ElementBuffer* eb = nullptr;
+static VertexArray* va = nullptr;
+static unsigned int fps = 0;
+static unsigned int lastDeltaTime = 0;
 
 void CheckShaderCompile(GLuint shader, const char* name) {
     GLint success;
@@ -107,17 +109,12 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         1, 0, 3
     };
 
-    GLCall(glGenVertexArrays(1, &VAO));
-    GLCall(glBindVertexArray(VAO));
-
-    // VBO
+    va = new VertexArray();
     vb = new VertexBuffer(vertices, sizeof(vertices));
-
-    // EBO
+    VertexBufferLayout layout;
+    layout.Push<float>(3);
+    va->AddBuffer(*vb, layout);
     eb = new ElementBuffer(elements, 6);
-
-    GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
-    GLCall(glEnableVertexAttribArray(0));
 
     ShaderProgramSource source = parseShader("shaders/basic.glsl");
     const char* vertexShaderSource = source.vertexSourceProgram.c_str();
@@ -175,10 +172,8 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     unsigned int tickStartTime = SDL_GetTicks();
     GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-
     GLCall(glUseProgram(shaderProgram));
-    GLCall(glBindVertexArray(VAO));
-    // glDrawArrays(GL_TRIANGLES, 0, 3);
+    va->Bind();
     GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
     SDL_GL_SwapWindow(window);
@@ -196,11 +191,9 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
-    /* SDL will clean up the window/renderer for us. */
-    // glDeleteBuffers(1, &VBO);
     delete eb;
     delete vb;
-    GLCall(glDeleteVertexArrays(1, &VAO));
+    delete va;
     GLCall(glDeleteProgram(shaderProgram));
     SDL_GL_DestroyContext(glContext);
 }

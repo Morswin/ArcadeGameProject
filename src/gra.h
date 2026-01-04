@@ -1,10 +1,11 @@
 #ifndef ARCADEGAMEPROJECT_GRA_H
 #define ARCADEGAMEPROJECT_GRA_H
 
+#include <vector>
 #include "mapa.h"
 #include "byt.h"
 #include "gracz.h"
-#include <vector>
+#include "ustawienia.h"
 
 class Gra
 {
