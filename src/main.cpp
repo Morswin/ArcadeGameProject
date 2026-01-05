@@ -13,13 +13,14 @@
 #include "vertex_array.h"
 #include "shader.h"
 
+// TODO - This needs to get moved/abstracted into a separate thing. Maybe game.h would do? Or something else.
 static SDL_Window* window = nullptr;
 static SDL_GLContext glContext;
-static unsigned int vertexShader, fragmentShader, shaderProgram;
 static VertexBuffer* vb = nullptr;
 static ElementBuffer* eb = nullptr;
 static VertexArray* va = nullptr;
 static Shader* shader = nullptr;
+static Renderer* renderer = nullptr;
 static unsigned int fps = 0;
 static unsigned int lastDeltaTime = 0;
 
@@ -95,6 +96,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // Background color
     GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
 
+    renderer = new Renderer();
+
     return SDL_APP_CONTINUE;
 }
 
@@ -116,11 +119,9 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
     unsigned int tickStartTime = SDL_GetTicks();
-    GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-    shader->Bind();
-    va->Bind();
-    GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+    renderer->Clear();
+    renderer->Draw(*va, *eb, *shader);
 
     SDL_GL_SwapWindow(window);
 
@@ -141,5 +142,6 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
     delete vb;
     delete va;
     delete shader;
+    delete renderer;
     SDL_GL_DestroyContext(glContext);
 }
