@@ -2,7 +2,6 @@
 #define TEXTURE_H
 
 #include <string>
-#include "renderer_utils.h"
 
 class Texture {
 private:

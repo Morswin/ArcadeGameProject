@@ -1,5 +1,6 @@
 #include "vertex_array.h"
 
+#include <glad/glad.h>
 #include "renderer_utils.h"
 
 VertexArray::VertexArray() {

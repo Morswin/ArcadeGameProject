@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <glad/glad.h>
 #include "renderer_utils.h"
 
 Shader::Shader(const std::string& filepath)

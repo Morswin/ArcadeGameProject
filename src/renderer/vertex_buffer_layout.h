@@ -2,6 +2,7 @@
 #define VERTEX_BUFFER_LAYOUT_H
 
 #include <vector>
+#include <glad/glad.h>
 #include "renderer_utils.h"
 
 struct VertexBufferElement {

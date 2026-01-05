@@ -1,6 +1,7 @@
 #include "element_buffer.h"
 
 #include <cassert>
+#include <glad/glad.h>
 #include "renderer_utils.h"
 
 ElementBuffer::ElementBuffer(const unsigned int* data, unsigned int count)

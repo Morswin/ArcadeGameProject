@@ -1,6 +1,8 @@
 #include "renderer.h"
 
 #include <iostream>
+#include <glad/glad.h>
+#include "renderer_utils.h"
 
 void Renderer::Clear() const {
     GLCall(glClear(GL_COLOR_BUFFER_BIT));
