@@ -7,11 +7,12 @@
 #include <string>
 #include <sstream>
 
-#include "renderer.h"
-#include "vertex_buffer.h"
-#include "element_buffer.h"
-#include "vertex_array.h"
-#include "shader.h"
+#include "renderer/renderer_utils.h"
+#include "renderer/renderer.h"
+#include "renderer/vertex_buffer.h"
+#include "renderer/element_buffer.h"
+#include "renderer/vertex_array.h"
+#include "renderer/shader.h"
 
 // TODO - This needs to get moved/abstracted into a separate thing. Maybe game.h would do? Or something else.
 static SDL_Window* window = nullptr;

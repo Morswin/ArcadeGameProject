@@ -1,7 +1,7 @@
 #include "element_buffer.h"
 
 #include <cassert>
-#include "renderer.h"
+#include "renderer_utils.h"
 
 ElementBuffer::ElementBuffer(const unsigned int* data, unsigned int count)
     : m_Count(count)

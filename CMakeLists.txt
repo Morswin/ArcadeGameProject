@@ -61,18 +61,20 @@ add_executable(ArcadeGameProject
     src/pocisk.h
     src/pocisk_dekorator.h
 
-    src/element_buffer.h
-    src/element_buffer.cpp
-    src/renderer.h
-    src/renderer.cpp
-    src/vertex_buffer.h
-    src/vertex_buffer.cpp
-    src/vertex_array.h
-    src/vertex_array.cpp
-    src/vertex_buffer_layout.h
-    src/vertex_buffer_layout.cpp
-    src/shader.h
-    src/shader.cpp
+    src/renderer/element_buffer.h
+    src/renderer/element_buffer.cpp
+    src/renderer/renderer.h
+    src/renderer/renderer.cpp
+    src/renderer/vertex_buffer.h
+    src/renderer/vertex_buffer.cpp
+    src/renderer/vertex_array.h
+    src/renderer/vertex_array.cpp
+    src/renderer/vertex_buffer_layout.h
+    src/renderer/vertex_buffer_layout.cpp
+    src/renderer/shader.h
+    src/renderer/shader.cpp
+    src/renderer/renderer_utils.h
+    src/renderer/renderer_utils.cpp
 )
 
 # Link against SDL3

@@ -2,7 +2,7 @@
 #define VERTEX_BUFFER_LAYOUT_H
 
 #include <vector>
-#include "renderer.h"
+#include "renderer_utils.h"
 
 struct VertexBufferElement {
     unsigned int type;
