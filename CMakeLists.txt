@@ -16,6 +16,15 @@ add_custom_target(copy_shaders ALL
     COMMENT "Copying shader files to shader subdirectory in build directory."
 )
 
+set(RESOURCE_DIR ${CMAKE_SOURCE_DIR}/resources/)
+file(GLOB RESOURCES ${RESOURCE_DIR}/*)
+set(RESOURCE_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/resources)
+add_custom_target(copy_resources ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${RESOURCE_DIR} ${RESOURCE_OUTPUT_DIR}
+    COMMENT "Copying resource files to resource subdirectory in build directory."
+)
+
 # Enables FetchContent
 include(FetchContent)
 
@@ -62,6 +71,7 @@ add_executable(ArcadeGameProject
 
     src/third_party/glad/glad.c
     src/third_party/stb/stb_image.h
+    src/third_party/stb/stb_image.cpp
 
     src/renderer/element_buffer.h
     src/renderer/element_buffer.cpp
@@ -77,6 +87,8 @@ add_executable(ArcadeGameProject
     src/renderer/shader.cpp
     src/renderer/renderer_utils.h
     src/renderer/renderer_utils.cpp
+    src/renderer/texture.h
+    src/renderer/texture.cpp
 )
 
 # Link against SDL3

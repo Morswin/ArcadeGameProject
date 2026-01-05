@@ -13,6 +13,7 @@
 #include "renderer/element_buffer.h"
 #include "renderer/vertex_array.h"
 #include "renderer/shader.h"
+#include "renderer/texture.h"
 
 // TODO - This needs to get moved/abstracted into a separate thing. Maybe game.h would do? Or something else.
 static SDL_Window* window = nullptr;
@@ -22,6 +23,7 @@ static ElementBuffer* eb = nullptr;
 static VertexArray* va = nullptr;
 static Shader* shader = nullptr;
 static Renderer* renderer = nullptr;
+static Texture* texture = nullptr;
 static unsigned int fps = 0;
 static unsigned int lastDeltaTime = 0;
 
@@ -64,10 +66,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     /* Data for VBO */
     float vertices[] = {
-         0.5f,  0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f
+         0.5f,  0.5f, 0.0f, 0.125f, 0.125f,
+        -0.5f, -0.5f, 0.0f, 0.0f,   0.0f,
+         0.5f, -0.5f, 0.0f, 0.125f, 0.0f,
+        -0.5f,  0.5f, 0.0f, 0.0f,   0.125f
     };
 
     /* Data for EBO */
@@ -76,18 +78,23 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         1, 0, 3
     };
 
+    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    GLCall(glEnable(GL_BLEND));
+
     va = new VertexArray();
     vb = new VertexBuffer(vertices, sizeof(vertices));
     VertexBufferLayout layout;
     layout.Push<float>(3);
+    layout.Push<float>(2);
     va->AddBuffer(*vb, layout);
     eb = new ElementBuffer(elements, 6);
 
     shader = new Shader("shaders/basic.glsl");
     shader->Bind();
 
-    // Example of using the uniform. It was in the tutorial, but my case doesn't need this for now.
-    // shader->SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+    texture = new Texture("resources/food.png");
+    texture->Bind();
+    shader->SetUniform1i("u_Texture", 0);
 
     va->Unbind();
     vb->Unbind();
@@ -144,5 +151,6 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
     delete va;
     delete shader;
     delete renderer;
+    delete texture;
     SDL_GL_DestroyContext(glContext);
 }
