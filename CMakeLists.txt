@@ -44,7 +44,6 @@ endif()
 
 add_executable(ArcadeGameProject
     src/main.cpp
-    src/glad.c
     src/mapa.h
     src/gra.h
     src/element_gry.h
@@ -60,6 +59,9 @@ add_executable(ArcadeGameProject
     src/przeciwnik.h
     src/pocisk.h
     src/pocisk_dekorator.h
+
+    src/third_party/glad/glad.c
+    src/third_party/stb/stb_image.h
 
     src/renderer/element_buffer.h
     src/renderer/element_buffer.cpp
