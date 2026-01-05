@@ -1,7 +1,7 @@
 #define SDL_MAIN_USE_CALLBACKS 1
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include <glad/glad.h>
+// #include <glad/glad.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -11,52 +11,17 @@
 #include "vertex_buffer.h"
 #include "element_buffer.h"
 #include "vertex_array.h"
-
-struct ShaderProgramSource {
-    std::string vertexSourceProgram;
-    std::string fragmentSourceProgram;
-};
-
-static ShaderProgramSource parseShader(const std::string& filepath) {
-    std::ifstream stream(filepath);
-    enum class ShaderType { NONE=-1, VERTEX=0, FRAGMENT=1 };
-    std::string line;
-    std::stringstream ss[2];
-    ShaderType type = ShaderType::NONE;
-    while ( getline(stream, line) ) {
-        if (line.find("#shader") != std::string::npos) {
-            if (line.find("vertex") != std::string::npos) {
-                type = ShaderType::VERTEX;
-            }
-            else if (line.find("fragment") != std::string::npos) {
-                type = ShaderType::FRAGMENT;
-            }
-        }
-        else {
-            ss[(int)type] << line << "\n";
-        }
-    }
-    return { ss[0].str(), ss[1].str() };
-}
+#include "shader.h"
 
 static SDL_Window* window = nullptr;
 static SDL_GLContext glContext;
-static unsigned int VAO, vertexShader, fragmentShader, shaderProgram;
+static unsigned int vertexShader, fragmentShader, shaderProgram;
 static VertexBuffer* vb = nullptr;
 static ElementBuffer* eb = nullptr;
 static VertexArray* va = nullptr;
+static Shader* shader = nullptr;
 static unsigned int fps = 0;
 static unsigned int lastDeltaTime = 0;
-
-void CheckShaderCompile(GLuint shader, const char* name) {
-    GLint success;
-    GLchar infoLog[512];
-    GLCall(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
-    if (!success) {
-        GLCall(glGetShaderInfoLog(shader, 512, nullptr, infoLog));
-        std::cerr << "Error compiling " << name << ":\n" << infoLog << std::endl;
-    }
-}
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
@@ -71,7 +36,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-    window = SDL_CreateWindow("Hello OpenGL Triangle", 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    window = SDL_CreateWindow("Arcade Game Project", 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (!window) {
         SDL_Log("Failed to create window: %s", SDL_GetError());
         SDL_Quit();
@@ -116,35 +81,16 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     va->AddBuffer(*vb, layout);
     eb = new ElementBuffer(elements, 6);
 
-    ShaderProgramSource source = parseShader("shaders/basic.glsl");
-    const char* vertexShaderSource = source.vertexSourceProgram.c_str();
-    const char* fragmentShaderSource = source.fragmentSourceProgram.c_str();
+    shader = new Shader("shaders/basic.glsl");
+    shader->Bind();
 
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    GLCall(glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr));
-    GLCall(glCompileShader(vertexShader));
-    CheckShaderCompile(vertexShader, "vertex shader");
+    // Example of using the uniform. It was in the tutorial, but my case doesn't need this for now.
+    // shader->SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    GLCall(glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr));
-    GLCall(glCompileShader(fragmentShader));
-    CheckShaderCompile(fragmentShader, "fragment shader");
-
-    shaderProgram = glCreateProgram();
-    GLCall(glAttachShader(shaderProgram, vertexShader));
-    GLCall(glAttachShader(shaderProgram, fragmentShader));
-    GLCall(glLinkProgram(shaderProgram));
-
-    GLint success;
-    GLCall(glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success));
-    if (!success) {
-        GLchar infoLog[512];
-        GLCall(glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog));
-        std::cerr << "Error linking shader program:\n" << infoLog << std::endl;
-    }
-
-    GLCall(glDeleteShader(vertexShader));
-    GLCall(glDeleteShader(fragmentShader));
+    va->Unbind();
+    vb->Unbind();
+    eb->Unbind();
+    shader->Unbind();
 
     // Background color
     GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
@@ -172,7 +118,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     unsigned int tickStartTime = SDL_GetTicks();
     GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-    GLCall(glUseProgram(shaderProgram));
+    shader->Bind();
     va->Bind();
     GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
@@ -194,6 +140,6 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
     delete eb;
     delete vb;
     delete va;
-    GLCall(glDeleteProgram(shaderProgram));
+    delete shader;
     SDL_GL_DestroyContext(glContext);
 }

@@ -71,6 +71,8 @@ add_executable(ArcadeGameProject
     src/vertex_array.cpp
     src/vertex_buffer_layout.h
     src/vertex_buffer_layout.cpp
+    src/shader.h
+    src/shader.cpp
 )
 
 # Link against SDL3
