@@ -51,6 +51,9 @@ else()
     message(STATUS "Using local SDL3")
 endif()
 
+message(STATUS "Getting GLM from Github")
+include_dependency(glm https://github.com/g-truc/glm.git 1.0.1)
+
 add_executable(ArcadeGameProject
     src/main.cpp
     src/mapa.h
@@ -102,6 +105,7 @@ target_compile_definitions(ArcadeGameProject PRIVATE SDL_MAIN_USE_CALLBACKS)
 
 # link all libraries to the project
 target_link_libraries(ArcadeGameProject PRIVATE SDL3::SDL3)
+target_link_libraries(ArcadeGameProject PRIVATE glm::glm)
 
 # Perform the copy of shaders to build subdirectory
 add_dependencies(ArcadeGameProject copy_shaders)

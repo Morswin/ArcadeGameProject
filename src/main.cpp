@@ -78,8 +78,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         1, 0, 3
     };
 
-    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     GLCall(glEnable(GL_BLEND));
+    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     va = new VertexArray();
     vb = new VertexBuffer(vertices, sizeof(vertices));
