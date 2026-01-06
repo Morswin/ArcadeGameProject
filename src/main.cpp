@@ -2,10 +2,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <glad/glad.h>
-#include <iostream>
-#include <fstream>
 #include <string>
-#include <sstream>
 
 #include "renderer/renderer_utils.h"
 #include "renderer/renderer.h"
@@ -92,7 +89,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     shader = new Shader("shaders/basic.glsl");
     shader->Bind();
 
-    texture = new Texture("resources/food.png");
+    std::string basePath = SDL_GetBasePath();
+    std::string texPath = basePath + "resources/food.png";
+    texture = new Texture(texPath);
+    // texture = new Texture("resources/food.png");
     texture->Bind();
     shader->SetUniform1i("u_Texture", 0);
 

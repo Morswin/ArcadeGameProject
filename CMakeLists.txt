@@ -109,6 +109,7 @@ target_link_libraries(ArcadeGameProject PRIVATE glm::glm)
 
 # Perform the copy of shaders to build subdirectory
 add_dependencies(ArcadeGameProject copy_shaders)
+add_dependencies(ArcadeGameProject copy_resources)
 
 if (WIN32)
     add_custom_command(

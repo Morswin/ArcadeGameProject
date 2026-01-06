@@ -1,5 +1,6 @@
 #include "texture.h"
 
+#include <iostream>
 #include <glad/glad.h>
 #include "../third_party/stb/stb_image.h"
 #include "renderer_utils.h"
@@ -9,8 +10,12 @@ Texture::Texture(const std::string& path)
 {
     stbi_set_flip_vertically_on_load(1);
     m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_BPP, 4);
+    if (!m_LocalBuffer) {
+        std::cerr << "Failed to load texture: " << path << std::endl;
+    }
     GLCall(glGenTextures(1, &m_RendererID));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+    GLCall(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
