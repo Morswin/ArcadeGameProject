@@ -3,7 +3,7 @@
 #include <SDL3/SDL_main.h>
 #include <glad/glad.h>
 #include <string>
-
+#include <iostream>
 #include "renderer/renderer_utils.h"
 #include "renderer/renderer.h"
 #include "renderer/vertex_buffer.h"
@@ -11,10 +11,11 @@
 #include "renderer/vertex_array.h"
 #include "renderer/shader.h"
 #include "renderer/texture.h"
+#include "sdl_error.h"
+#include "game.h"
 
 // TODO - This needs to get moved/abstracted into a separate thing. Maybe game.h would do? Or something else.
-static SDL_Window* window = nullptr;
-static SDL_GLContext glContext;
+static Game* game = nullptr;
 static VertexBuffer* vb = nullptr;
 static ElementBuffer* eb = nullptr;
 static VertexArray* va = nullptr;
@@ -26,38 +27,13 @@ static unsigned int lastDeltaTime = 0;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
-    SDL_SetAppMetadata("ArcadeGameProject", "0.1", "ArcadeGameProject");
-
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
-        SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+    try {
+        game = new Game();
+    }
+    catch (sdl_error e) {
+        std::cerr << e.what() << std::endl;
         return SDL_APP_FAILURE;
     }
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-    window = SDL_CreateWindow("Arcade Game Project", 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-    if (!window) {
-        SDL_Log("Failed to create window: %s", SDL_GetError());
-        SDL_Quit();
-        return SDL_APP_FAILURE;
-    }
-
-    glContext = SDL_GL_CreateContext(window);
-    if (!glContext) {
-        SDL_Log("Failed to create GL context: %s", SDL_GetError());
-        SDL_Quit();
-        return SDL_APP_FAILURE;
-    }
-
-    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        SDL_Log("Failed initialize GLAD");
-        SDL_Quit();
-        return SDL_APP_FAILURE;
-    }
-
-    SDL_GL_SetSwapInterval(1);  // VSync = 1, uncapped = 0, adaprive VSync = -1 (if supported)
 
     GLCall(glViewport(0, 0, 800, 600));
 
@@ -131,14 +107,14 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     renderer->Clear();
     renderer->Draw(*va, *eb, *shader);
 
-    SDL_GL_SwapWindow(window);
+    game->SwapWindow();
 
     fps++;
     unsigned int deltaTime = SDL_GetTicks() - tickStartTime;
     if (tickStartTime > lastDeltaTime + 1000) {
         lastDeltaTime = tickStartTime;
         std::string title = "FPS: " + std::to_string(fps);
-        SDL_SetWindowTitle(window, title.c_str());
+        game->SetWindowTitle(title);
         fps = 0;
     }
     return SDL_APP_CONTINUE;
@@ -152,5 +128,5 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
     delete shader;
     delete renderer;
     delete texture;
-    SDL_GL_DestroyContext(glContext);
+    delete game;
 }

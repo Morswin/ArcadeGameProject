@@ -1,0 +1,63 @@
+#include "game.h"
+
+#include <sstream>
+#include <glad/glad.h>
+#include "sdl_error.h"
+
+Game::Game() {
+    SDL_SetAppMetadata("ArcadeGameProject", "0.1", "ArcadeGameProject");
+
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        std::stringstream ss;
+        ss << "Couldn't initialize SDL: " << SDL_GetError() << std::endl;
+        // SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+        // return SDL_APP_FAILURE;
+        throw sdl_error(ss.str());
+    }
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+    m_Window = SDL_CreateWindow("Arcade Game Project", 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    if (!m_Window) {
+        std::stringstream ss;
+        ss << "Failed to create window: " << SDL_GetError() << std::endl;
+        // SDL_Log("Failed to create window: %s", SDL_GetError());
+        SDL_Quit();
+        throw sdl_error(ss.str());
+        // return SDL_APP_FAILURE;
+    }
+
+    m_glContext = SDL_GL_CreateContext(m_Window);
+    if (!m_glContext) {
+        std::stringstream ss;
+        ss << "Failed to create GL context: " << SDL_GetError() << std::endl;
+        // SDL_Log("Failed to create GL context: %s", SDL_GetError());
+        SDL_Quit();
+        // return SDL_APP_FAILURE;
+        throw sdl_error(ss.str());
+    }
+
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+        // SDL_Log("Failed initialize GLAD");
+        SDL_Quit();
+        // return SDL_APP_FAILURE;
+        throw sdl_error("Failed initialize GLAD");
+    }
+
+    SDL_GL_SetSwapInterval(1);  // VSync = 1, uncapped = 0, adaprive VSync = -1 (if supported)
+}
+
+Game::~Game() {
+    SDL_GL_DestroyContext(m_glContext);
+}
+
+void Game::SwapWindow() {
+    SDL_GL_SwapWindow(m_Window);
+}
+
+void Game::SetWindowTitle(std::string& name) {
+    SDL_SetWindowTitle(m_Window, name.c_str());
+}
+

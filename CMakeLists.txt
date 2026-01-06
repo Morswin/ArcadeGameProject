@@ -57,7 +57,8 @@ include_dependency(glm https://github.com/g-truc/glm.git 1.0.1)
 add_executable(ArcadeGameProject
     src/main.cpp
     src/mapa.h
-    src/gra.h
+    src/game.h
+    src/game.cpp
     src/element_gry.h
     src/wektor_2d.h
     src/otoczenie.h
@@ -71,6 +72,8 @@ add_executable(ArcadeGameProject
     src/przeciwnik.h
     src/pocisk.h
     src/pocisk_dekorator.h
+
+    src/sdl_error.h
 
     src/third_party/glad/glad.c
     src/third_party/stb/stb_image.h
