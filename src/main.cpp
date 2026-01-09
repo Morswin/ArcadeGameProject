@@ -71,10 +71,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     /* Data for VBO */
     float vertices[] = {
-         0.5f,  0.5f, 0.0f, 0.125f, 0.125f,
-        -0.5f, -0.5f, 0.0f, 0.0f,   0.0f,
-         0.5f, -0.5f, 0.0f, 0.125f, 0.0f,
-        -0.5f,  0.5f, 0.0f, 0.0f,   0.125f
+         0.5f,  0.5f, 0.0f, 0.125f, 1.0f,
+        -0.5f, -0.5f, 0.0f, 0.0f,   0.875f,
+         0.5f, -0.5f, 0.0f, 0.125f, 0.875f,
+        -0.5f,  0.5f, 0.0f, 0.0f,   1.0f
     };
 
     /* Data for EBO */

@@ -60,7 +60,6 @@ add_executable(ArcadeGameProject
     src/game.h
     src/game.cpp
     src/element_gry.h
-    src/wektor_2d.h
     src/otoczenie.h
     src/byt.h
     src/gracz.h
