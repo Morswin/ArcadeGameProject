@@ -13,7 +13,7 @@
 #include "renderer/texture.h"
 #include "sdl_error.h"
 #include "game.h"
-#include "glm/vec2.hpp"
+#include "glm/glm.hpp"
 
 struct MovementInput {
     bool right = false;
@@ -40,7 +40,7 @@ struct MovementInput {
             y = -1.0f;
         }
 
-        movement = glm::vec2{x, y};
+        movement = glm::normalize(glm::vec2{x, y});
     }
 };
 
