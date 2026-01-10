@@ -175,7 +175,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     unsigned int tickStartTime = SDL_GetTicks();
 
     movement_input.UpdateMovement();
-    SDL_Log("Movem(ent: (%.2f, %.2f)", movement_input.movement.x, movement_input.movement.y);
+    // SDL_Log("Movem(ent: (%.2f, %.2f)", movement_input.movement.x, movement_input.movement.y);
     // IT WORKS :)
 
     renderer->Clear();

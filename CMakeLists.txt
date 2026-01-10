@@ -60,10 +60,13 @@ add_executable(ArcadeGameProject
     src/mapa.h
     src/game.h
     src/game.cpp
-    src/element_gry.h
-    src/otoczenie.h
-    src/byt.h
-    src/gracz.h
+    src/game_element.h
+    src/environment.h
+    src/environment.cpp
+    src/entity.h
+    src/entity.cpp
+    src/player.h
+    src/player.cpp
     src/zdobycz.h
     src/ustawienia.h
     src/sciana.h
