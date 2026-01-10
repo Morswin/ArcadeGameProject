@@ -1,0 +1,50 @@
+#ifndef RENDER_MESH_H
+#define RENDER_MESH_H
+
+#include <string>
+#include <SDL3/SDL.h>
+#include "vertex_array.h"
+#include "vertex_buffer.h"
+#include "vertex_buffer_layout.h"
+#include "element_buffer.h"
+#include "shader.h"
+#include "texture.h"
+
+struct RenderMesh {
+    VertexArray* vao;
+    VertexBuffer* vbo;
+    ElementBuffer* ebo;
+    Shader* shader;
+    Texture* texture;
+
+    RenderMesh(const float* vertices, unsigned int verticesCount, const unsigned int* elements, unsigned int elementCount, const std::string& texturePath) {
+        vao = new VertexArray();
+        vbo = new VertexBuffer(vertices, sizeof(float) * verticesCount);
+        ebo = new ElementBuffer(elements, elementCount);
+        VertexBufferLayout layout;
+        layout.Push<float>(3);
+        layout.Push<float>(2);
+        vao->AddBuffer(*vbo, layout);
+        shader = new Shader("shaders/basic.glsl");
+        shader->Bind();
+        std::string basePath = SDL_GetBasePath();
+        std::string actualTexPath = basePath + texturePath;
+        texture = new Texture(actualTexPath);
+        texture->Bind();
+        shader->SetUniform1i("u_Texture", 0);
+        vao->Unbind();
+        vbo->Unbind();
+        ebo->Unbind();
+        shader->Unbind();
+    }
+
+    ~RenderMesh() {
+        delete vao;
+        delete vbo;
+        delete ebo;
+        delete shader;
+        delete texture;
+    }
+};
+
+#endif // RENDER_MESH_H

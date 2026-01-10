@@ -61,6 +61,7 @@ add_executable(ArcadeGameProject
     src/game.h
     src/game.cpp
     src/game_element.h
+    src/game_element.cpp
     src/environment.h
     src/environment.cpp
     src/entity.h
@@ -75,6 +76,7 @@ add_executable(ArcadeGameProject
     src/przeciwnik.h
     src/pocisk.h
     src/pocisk_dekorator.h
+    src/transform2d.h
 
     src/sdl_error.h
 
@@ -84,6 +86,7 @@ add_executable(ArcadeGameProject
 
     src/renderer/element_buffer.h
     src/renderer/element_buffer.cpp
+    src/renderer/render_mesh.h
     src/renderer/renderer.h
     src/renderer/renderer.cpp
     src/renderer/vertex_buffer.h

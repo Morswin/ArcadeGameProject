@@ -11,6 +11,7 @@
 #include "renderer/vertex_array.h"
 #include "renderer/shader.h"
 #include "renderer/texture.h"
+#include "renderer/render_mesh.h"
 #include "sdl_error.h"
 #include "game.h"
 #include "glm/glm.hpp"
@@ -59,6 +60,7 @@ static Shader* shader = nullptr;
 static Renderer* renderer = nullptr;
 static Texture* texture = nullptr;
 static MovementInput movement_input;
+static RenderMesh* render_mesh = nullptr;
 static unsigned int fps = 0;
 static unsigned int lastDeltaTime = 0;
 
@@ -92,28 +94,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-    va = new VertexArray();
-    vb = new VertexBuffer(vertices, sizeof(vertices));
-    VertexBufferLayout layout;
-    layout.Push<float>(3);
-    layout.Push<float>(2);
-    va->AddBuffer(*vb, layout);
-    eb = new ElementBuffer(elements, 6);
-
-    shader = new Shader("shaders/basic.glsl");
-    shader->Bind();
-
-    std::string basePath = SDL_GetBasePath();
-    std::string texPath = basePath + "resources/food.png";
-    texture = new Texture(texPath);
-    // texture = new Texture("resources/food.png");
-    texture->Bind();
-    shader->SetUniform1i("u_Texture", 0);
-
-    va->Unbind();
-    vb->Unbind();
-    eb->Unbind();
-    shader->Unbind();
+    render_mesh = new RenderMesh(vertices, 20, elements, 6, "resources/food.png");
 
     // Background color
     GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
@@ -179,7 +160,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     // IT WORKS :)
 
     renderer->Clear();
-    renderer->Draw(*va, *eb, *shader);
+    renderer->Draw(*render_mesh->vao, *render_mesh->ebo, *render_mesh->shader);
 
     game->SwapWindow();
 
@@ -196,11 +177,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
-    delete eb;
-    delete vb;
-    delete va;
-    delete shader;
+    delete render_mesh;
     delete renderer;
-    delete texture;
     delete game;
 }
