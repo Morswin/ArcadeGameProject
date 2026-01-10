@@ -1,7 +1,6 @@
 #ifndef ARCADEGAMEPROJECT_USTAWIENIA_H
 #define ARCADEGAMEPROJECT_USTAWIENIA_H
 
-#include "wektor_2d.h"
 
 class Ustawienia
 {

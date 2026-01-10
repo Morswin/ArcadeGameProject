@@ -40,7 +40,13 @@ struct MovementInput {
             y = -1.0f;
         }
 
-        movement = glm::normalize(glm::vec2{x, y});
+        // I believe that this if statement should fix the issue with accidentally making a vec2 of Nan values. Mostlikely it was a way not to divide by zero, but I am not sure. After all, there is no need for notmalizing a vector of 0.0f length, right?
+        if (!(x == 0.0f && y ==0.0f)) {
+            movement = glm::normalize(glm::vec2{x, y});
+        }
+        else {
+            movement = glm::vec2{x, y};
+        }
     }
 };
 
@@ -169,7 +175,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     unsigned int tickStartTime = SDL_GetTicks();
 
     movement_input.UpdateMovement();
-    // SDL_Log("Movement: (%.2f, %.2f)", movement_input.movement.x, movement_input.movement.y);
+    SDL_Log("Movem(ent: (%.2f, %.2f)", movement_input.movement.x, movement_input.movement.y);
     // IT WORKS :)
 
     renderer->Clear();

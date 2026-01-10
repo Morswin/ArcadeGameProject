@@ -2,7 +2,6 @@
 #define ARCADEGAMEPROJECT_GRACZ_H
 
 #include "byt.h"
-#include "wektor_2d.h"
 
 class Gracz : public Byt
 {

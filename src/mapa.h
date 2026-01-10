@@ -2,7 +2,6 @@
 #define ARCADEGAMEPROJECT_MAPA_H
 
 #include "otoczenie.h"
-#include "wektor_2d.h"
 #include "gracz.h"
 #include <map>
 

@@ -1,15 +1,15 @@
 #ifndef ARCADEGAMEPROJECT_BYT_H
 #define ARCADEGAMEPROJECT_BYT_H
 
+#include <glm/glm.hpp>
 #include "element_gry.h"
-#include "wektor_2d.h"
 #include <vector>
 
 class Byt : virtual public ElementGry
 {
 protected:
-    Wektor2D m_predkosc;
-    std::vector<Wektor2D> m_sily;
+    glm::vec2 m_predkosc;
+    std::vector<glm::vec2> m_sily;
     bool m_kolizjaKolo;
     bool m_kolizjaKwadrat;
     double m_kolizjaKoloŚrenica;
