@@ -13,17 +13,19 @@ protected:
     bool m_Visible = true;
     RenderMesh* m_Mesh = nullptr;
 public:
-    virtual ~GameElement() = default;
+    // virtual ~GameElement() = default;
 
-    virtual void Simulate(float deltaTime) = 0;
-    virtual void Display(const Renderer& renderer) const;
+    // virtual void Simulate(float deltaTime);// = 0;
 
-    inline void SetMesh(RenderMesh* mesh);
-    inline void SetPosition(glm::vec2 position);
-    inline void SetRotation(float rotation);
-    inline void SetScale(glm::vec2 scale);
-    inline Transform2D GetTransform() const { return m_Transform; }
-    inline glm::mat4 GetTransformMatrix() const { return m_Transform.matrix(); }
+    void Display(const Renderer& renderer) const;
+
+    void SetMesh(RenderMesh* mesh);
+    void SetPosition(glm::vec2 position);
+    void SetRotation(float rotation);
+    void SetScale(glm::vec2 scale);
+    Transform2D GetTransform() const { return m_Transform; }
+    glm::vec2 GetPosition() const { return m_Transform.position; }
+    glm::mat4 GetTransformMatrix() const { return m_Transform.matrix(); }
 };
 
 #endif //GAME_ELEMENT_H

@@ -4,24 +4,20 @@
 #include <glad/glad.h>
 #include <string>
 #include <iostream>
+#include "glm/glm.hpp"
 #include "renderer/renderer_utils.h"
 #include "renderer/renderer.h"
-#include "renderer/vertex_buffer.h"
-#include "renderer/element_buffer.h"
-#include "renderer/vertex_array.h"
-#include "renderer/shader.h"
-#include "renderer/texture.h"
 #include "renderer/render_mesh.h"
 #include "sdl_error.h"
 #include "game.h"
-#include "glm/glm.hpp"
+#include "game_element.h"
+#include "transform2d.h"
 
 struct MovementInput {
-    bool right = false;
-    bool left = false;
-    bool up = false;
-    bool down = false;
-    glm::vec2 movement{0.0f, 0.0f};
+    bool right, left, up, down;
+    glm::vec2 movement;
+
+    MovementInput() : right(false), left(false), up(false), down(false), movement(glm::vec2{0.0f, 0.0f}) {}
 
     void UpdateMovement() {
         float x = 0.0f;
@@ -53,13 +49,9 @@ struct MovementInput {
 
 // TODO - This needs to get moved/abstracted into a separate thing. Maybe game.h would do? Or something else.
 static Game* game = nullptr;
-static VertexBuffer* vb = nullptr;
-static ElementBuffer* eb = nullptr;
-static VertexArray* va = nullptr;
-static Shader* shader = nullptr;
 static Renderer* renderer = nullptr;
-static Texture* texture = nullptr;
 static MovementInput movement_input;
+static GameElement* game_element = nullptr;
 static RenderMesh* render_mesh = nullptr;
 static unsigned int fps = 0;
 static unsigned int lastDeltaTime = 0;
@@ -95,6 +87,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     render_mesh = new RenderMesh(vertices, 20, elements, 6, "resources/food.png");
+    game_element = new GameElement();
+    game_element->SetMesh(render_mesh);
 
     // Background color
     GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
@@ -158,12 +152,15 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     movement_input.UpdateMovement();
     // SDL_Log("Movem(ent: (%.2f, %.2f)", movement_input.movement.x, movement_input.movement.y);
     // IT WORKS :)
+    game_element->SetPosition(movement_input.movement);
 
     renderer->Clear();
-    renderer->Draw(*render_mesh->vao, *render_mesh->ebo, *render_mesh->shader);
+    // renderer->Draw(*render_mesh->vao, *render_mesh->ebo, *render_mesh->shader);
+    game_element->Display(*renderer);
 
     game->SwapWindow();
 
+    // TODO - M
     fps++;
     unsigned int deltaTime = SDL_GetTicks() - tickStartTime;
     if (tickStartTime > lastDeltaTime + 1000) {

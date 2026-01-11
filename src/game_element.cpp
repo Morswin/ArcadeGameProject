@@ -2,6 +2,9 @@
 
 void GameElement::Display(const Renderer& renderer) const {
     if (!m_Visible || !m_Mesh) return;
+    m_Mesh->shader->Bind();
+    m_Mesh->shader->SetUniform1mat4("u_Model", m_Transform.matrix());
+    renderer.Draw(*m_Mesh->vao, *m_Mesh->ebo, *m_Mesh->shader);
 }
 
 void GameElement::SetPosition(glm::vec2 position) {
