@@ -1,9 +1,9 @@
-#include "texture.h"
+#include "texture.hpp"
 
 #include <iostream>
 #include <glad/glad.h>
 #include "../third_party/stb/stb_image.h"
-#include "renderer_utils.h"
+#include "renderer_utils.hpp"
 
 Texture::Texture(const std::string& path)
     : m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0)

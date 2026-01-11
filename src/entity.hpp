@@ -2,7 +2,7 @@
 #define ENTITY_H
 
 #include <glm/glm.hpp>
-#include "game_element.h"
+#include "game_element.hpp"
 #include <vector>
 
 class Entity : virtual public GameElement

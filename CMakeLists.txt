@@ -57,50 +57,50 @@ include_dependency(glm https://github.com/g-truc/glm.git 1.0.1)
 add_executable(ArcadeGameProject
     src/main.cpp
 
-    src/game.h
+    src/game.hpp
     src/game.cpp
-    src/game_element.h
+    src/game_element.hpp
     src/game_element.cpp
-    src/environment.h
+    src/environment.hpp
     src/environment.cpp
-    src/entity.h
+    src/entity.hpp
     src/entity.cpp
-    src/map.h
+    src/map.hpp
     src/map.cpp
-    src/player.h
+    src/player.hpp
     src/player.cpp
-    src/zdobycz.h
-    src/ustawienia.h
-    src/sciana.h
-    src/podloga.h
-    src/strategia_przeciwnika.h
-    src/przeciwnik.h
-    src/pocisk.h
-    src/pocisk_dekorator.h
-    src/transform2d.h
+    src/zdobycz.hpp
+    src/ustawienia.hpp
+    src/sciana.hpp
+    src/podloga.hpp
+    src/strategia_przeciwnika.hpp
+    src/przeciwnik.hpp
+    src/pocisk.hpp
+    src/pocisk_dekorator.hpp
+    src/transform2d.hpp
 
-    src/sdl_error.h
+    src/sdl_error.hpp
 
     src/third_party/glad/glad.c
     src/third_party/stb/stb_image.h
     src/third_party/stb/stb_image.cpp
 
-    src/renderer/element_buffer.h
+    src/renderer/element_buffer.hpp
     src/renderer/element_buffer.cpp
-    src/renderer/render_mesh.h
-    src/renderer/renderer.h
+    src/renderer/render_mesh.hpp
+    src/renderer/renderer.hpp
     src/renderer/renderer.cpp
-    src/renderer/vertex_buffer.h
+    src/renderer/vertex_buffer.hpp
     src/renderer/vertex_buffer.cpp
-    src/renderer/vertex_array.h
+    src/renderer/vertex_array.hpp
     src/renderer/vertex_array.cpp
-    src/renderer/vertex_buffer_layout.h
+    src/renderer/vertex_buffer_layout.hpp
     src/renderer/vertex_buffer_layout.cpp
-    src/renderer/shader.h
+    src/renderer/shader.hpp
     src/renderer/shader.cpp
-    src/renderer/renderer_utils.h
+    src/renderer/renderer_utils.hpp
     src/renderer/renderer_utils.cpp
-    src/renderer/texture.h
+    src/renderer/texture.hpp
     src/renderer/texture.cpp
 )
 

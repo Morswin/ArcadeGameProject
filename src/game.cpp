@@ -1,8 +1,8 @@
-#include "game.h"
+#include "game.hpp"
 
 #include <sstream>
 #include <glad/glad.h>
-#include "sdl_error.h"
+#include "sdl_error.hpp"
 
 Game::Game() {
     SDL_SetAppMetadata("ArcadeGameProject", "0.1", "ArcadeGameProject");

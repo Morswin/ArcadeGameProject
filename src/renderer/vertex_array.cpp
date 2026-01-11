@@ -1,7 +1,7 @@
-#include "vertex_array.h"
+#include "vertex_array.hpp"
 
 #include <glad/glad.h>
-#include "renderer_utils.h"
+#include "renderer_utils.hpp"
 
 VertexArray::VertexArray() {
     GLCall(glGenVertexArrays(1, &m_RendererID));

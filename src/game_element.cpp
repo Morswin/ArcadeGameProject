@@ -1,4 +1,4 @@
-#include "game_element.h"
+#include "game_element.hpp"
 
 void GameElement::Display(const Renderer& renderer) const {
     if (!m_Visible || !m_Mesh) return;

@@ -1,8 +1,8 @@
 #ifndef ARCADEGAMEPROJECT_PRZECIWNIK_H
 #define ARCADEGAMEPROJECT_PRZECIWNIK_H
 
-#include "byt.h"
-#include "strategia_przeciwnika.h"
+#include "byt.hpp"
+#include "strategia_przeciwnika.hpp"
 
 class Przeciwnik : public Byt
 {

@@ -1,7 +1,7 @@
 #ifndef ARCADEGAMEPROJECT_ZDOBYCZ_H
 #define ARCADEGAMEPROJECT_ZDOBYCZ_H
 
-#include "byt.h"
+#include "byt.hpp"
 
 class Zdobycz : public Byt
 {

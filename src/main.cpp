@@ -5,13 +5,13 @@
 #include <string>
 #include <iostream>
 #include "glm/glm.hpp"
-#include "renderer/renderer_utils.h"
-#include "renderer/renderer.h"
-#include "renderer/render_mesh.h"
-#include "sdl_error.h"
-#include "game.h"
-#include "game_element.h"
-#include "transform2d.h"
+#include "renderer/renderer_utils.hpp"
+#include "renderer/renderer.hpp"
+#include "renderer/render_mesh.hpp"
+#include "sdl_error.hpp"
+#include "game.hpp"
+#include "game_element.hpp"
+#include "transform2d.hpp"
 
 struct MovementInput {
     bool right, left, up, down;

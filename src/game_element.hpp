@@ -2,9 +2,9 @@
 #define GAME_ELEMENT_H
 
 #include "glm/glm.hpp"
-#include "renderer/renderer.h"
-#include "renderer/render_mesh.h"
-#include "transform2d.h"
+#include "renderer/renderer.hpp"
+#include "renderer/render_mesh.hpp"
+#include "transform2d.hpp"
 
 class GameElement
 {

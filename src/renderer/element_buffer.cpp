@@ -1,8 +1,8 @@
-#include "element_buffer.h"
+#include "element_buffer.hpp"
 
 #include <cassert>
 #include <glad/glad.h>
-#include "renderer_utils.h"
+#include "renderer_utils.hpp"
 
 ElementBuffer::ElementBuffer(const unsigned int* data, unsigned int count)
     : m_Count(count)

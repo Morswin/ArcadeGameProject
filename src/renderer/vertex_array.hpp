@@ -1,8 +1,8 @@
 #ifndef VERTEX_ARRAY_H
 #define VERTEX_ARRAY_H
 
-#include "vertex_buffer.h"
-#include "vertex_buffer_layout.h"
+#include "vertex_buffer.hpp"
+#include "vertex_buffer_layout.hpp"
 
 class VertexArray {
 private:

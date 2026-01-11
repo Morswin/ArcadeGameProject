@@ -3,8 +3,8 @@
 
 #include <map>
 #include <glm/glm.hpp>
-#include "environment.h"
-#include "player.h"
+#include "environment.hpp"
+#include "player.hpp"
 
 class Map
 {

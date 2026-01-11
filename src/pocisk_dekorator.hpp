@@ -1,7 +1,7 @@
 #ifndef ARCADEGAMEPROJECT_POCISK_DEKORATOR_H
 #define ARCADEGAMEPROJECT_POCISK_DEKORATOR_H
 
-#include "pocisk.h"
+#include "pocisk.hpp"
 
 class PociskDekorator : public Pocisk
 {

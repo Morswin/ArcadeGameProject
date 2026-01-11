@@ -3,12 +3,12 @@
 
 #include <string>
 #include <SDL3/SDL.h>
-#include "vertex_array.h"
-#include "vertex_buffer.h"
-#include "vertex_buffer_layout.h"
-#include "element_buffer.h"
-#include "shader.h"
-#include "texture.h"
+#include "vertex_array.hpp"
+#include "vertex_buffer.hpp"
+#include "vertex_buffer_layout.hpp"
+#include "element_buffer.hpp"
+#include "shader.hpp"
+#include "texture.hpp"
 
 struct RenderMesh {
     VertexArray* vao;

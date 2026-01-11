@@ -1,10 +1,10 @@
-#include "shader.h"
+#include "shader.hpp"
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <glad/glad.h>
-#include "renderer_utils.h"
+#include "renderer_utils.hpp"
 
 Shader::Shader(const std::string& filepath)
     : m_FilePath(filepath), m_RendererID(0)
