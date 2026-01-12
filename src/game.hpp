@@ -22,8 +22,8 @@ public:
     Game();
     ~Game();
 
-    void SwapWindow();
-    void SetWindowTitle(std::string& name);
+    void SwapWindow() const;
+    void SetWindowTitle(std::string& name) const;
     // void symulujWszystkieByty();
     // void wyswietlWszystkieByty();
     // void wyswietlMape();

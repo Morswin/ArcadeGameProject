@@ -53,11 +53,11 @@ Game::~Game() {
     SDL_GL_DestroyContext(m_glContext);
 }
 
-void Game::SwapWindow() {
+void Game::SwapWindow() const {
     SDL_GL_SwapWindow(m_Window);
 }
 
-void Game::SetWindowTitle(std::string& name) {
+void Game::SetWindowTitle(std::string& name) const {
     SDL_SetWindowTitle(m_Window, name.c_str());
 }
 
