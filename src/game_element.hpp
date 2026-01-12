@@ -4,7 +4,7 @@
 #include "glm/glm.hpp"
 #include "renderer/renderer.hpp"
 #include "renderer/render_mesh.hpp"
-#include "transform2d.hpp"
+#include "renderer/transform2d.hpp"
 
 class GameElement
 {
@@ -19,12 +19,9 @@ public:
     void Display(const Renderer& renderer) const; // = 0;
 
     void SetMesh(RenderMesh* mesh);
-    void SetPosition(glm::vec2 position);
-    void SetRotation(float rotation);
-    void SetScale(glm::vec2 scale);
     inline Transform2D GetTransform() const { return m_Transform; }
-    inline glm::vec2 GetPosition() const { return m_Transform.position; }
-    inline glm::mat4 GetTransformMatrix() const { return m_Transform.matrix(); }
+    inline glm::vec2 GetPosition() const { return m_Transform.GetPosition(); }
+    inline glm::mat4 GetTransformMatrix() const { return m_Transform.GetMatrix(); }
 };
 
 #endif //GAME_ELEMENT_H

@@ -77,7 +77,6 @@ add_executable(ArcadeGameProject
     src/przeciwnik.hpp
     src/pocisk.hpp
     src/pocisk_dekorator.hpp
-    src/transform2d.hpp
 
     src/sdl_error.hpp
 
@@ -88,6 +87,7 @@ add_executable(ArcadeGameProject
     src/renderer/element_buffer.hpp
     src/renderer/element_buffer.cpp
     src/renderer/render_mesh.hpp
+    src/renderer/render_mesh.cpp
     src/renderer/renderer.hpp
     src/renderer/renderer.cpp
     src/renderer/vertex_buffer.hpp
@@ -102,6 +102,8 @@ add_executable(ArcadeGameProject
     src/renderer/renderer_utils.cpp
     src/renderer/texture.hpp
     src/renderer/texture.cpp
+    src/renderer/transform2d.hpp
+    src/renderer/transform2d.cpp
 )
 
 # Link against SDL3

@@ -4,13 +4,13 @@
 #include <glad/glad.h>
 #include <string>
 #include <iostream>
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 #include "renderer/renderer_utils.hpp"
 #include "renderer/renderer.hpp"
 #include "renderer/render_mesh.hpp"
+#include "renderer/transform2d.hpp"
 #include "sdl_error.hpp"
 #include "game.hpp"
-#include "transform2d.hpp"
 #include "player.hpp"
 
 struct MovementInput {

@@ -13,7 +13,7 @@ void Entity::Simulate(float deltaTime) {
         m_Acceleration += force;
     }
     m_Velocity += m_Acceleration * deltaTime;
-    m_Transform.position += m_Velocity * deltaTime;
+    m_Transform.SetPosition(m_Transform.GetPosition() + m_Velocity * deltaTime);
     m_Forces.clear();
 }
 

@@ -20,7 +20,6 @@ public:
     void SetMovementInputForce(glm::vec2 input);
 
     inline glm::vec2 GetView() const { return m_View; }
-    // void przyjmiejInputPlayera();  // Tutaj przyjąć z SDL3 inputy gracza albo jakoś tak
     // void zbierzZdobycz();  // Prawdopodobnie wzorzec Obserwator z Zdobyczami, żeby te mogły trafnie reagować na gracza
 };
 
