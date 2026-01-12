@@ -10,8 +10,8 @@
 #include "renderer/render_mesh.hpp"
 #include "sdl_error.hpp"
 #include "game.hpp"
-#include "game_element.hpp"
 #include "transform2d.hpp"
+#include "player.hpp"
 
 struct MovementInput {
     bool right, left, up, down;
@@ -51,10 +51,11 @@ struct MovementInput {
 static Game* game = nullptr;
 static Renderer* renderer = nullptr;
 static MovementInput movement_input;
-static GameElement* game_element = nullptr;
+static Player* player = nullptr;
 static RenderMesh* render_mesh = nullptr;
 static unsigned int fps = 0;
 static unsigned int lastDeltaTime = 0;
+static float deltaTime = 0.0f;
 
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
@@ -87,8 +88,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     render_mesh = new RenderMesh(vertices, 20, elements, 6, "resources/food.png");
-    game_element = new GameElement();
-    game_element->SetMesh(render_mesh);
+    player = new Player();
+    player->SetMesh(render_mesh);
+    // game_element = new GameElement();
+    // game_element->SetMesh(render_mesh);
 
     // Background color
     GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
@@ -150,19 +153,19 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     unsigned int tickStartTime = SDL_GetTicks();
 
     movement_input.UpdateMovement();
-    // SDL_Log("Movem(ent: (%.2f, %.2f)", movement_input.movement.x, movement_input.movement.y);
-    // IT WORKS :)
-    game_element->SetPosition(movement_input.movement);
+    player->SetMovementInputForce(movement_input.movement);
+    player->Simulate(deltaTime);
 
     renderer->Clear();
     // renderer->Draw(*render_mesh->vao, *render_mesh->ebo, *render_mesh->shader);
-    game_element->Display(*renderer);
+    // game_element->Display(*renderer);
+    player->Display(*renderer);
 
     game->SwapWindow();
 
-    // TODO - M
     fps++;
-    unsigned int deltaTime = SDL_GetTicks() - tickStartTime;
+    deltaTime = (SDL_GetTicks() - tickStartTime) / 1000.0f;
+    // std::cout << player->GetVelocity().x << " " << player->GetVelocity().y << std::endl;
     if (tickStartTime > lastDeltaTime + 1000) {
         lastDeltaTime = tickStartTime;
         std::string title = "FPS: " + std::to_string(fps);
