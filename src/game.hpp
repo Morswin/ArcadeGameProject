@@ -5,9 +5,10 @@
 #include <string>
 #include <SDL3/SDL.h>
 // #include "mapa.h"
-// #include "byt.h"
-// #include "gracz.h"
 // #include "ustawienia.h"
+#include "renderer/renderer.hpp"
+#include "renderer/render_mesh.hpp"
+#include "player.hpp"
 
 class Game
 {
@@ -18,16 +19,18 @@ private:
     // Ustawienia& m_ustawienia;
     SDL_Window* m_Window = nullptr;
     SDL_GLContext m_glContext;
+    RenderMesh* m_PlayerMesh = nullptr;
+    Player* m_Player = nullptr;
 public:
     Game();
     ~Game();
 
+    void Draw(Renderer* renderer);
+    void Simulate(float deltaTime);
     void SwapWindow() const;
     void SetWindowTitle(std::string& name) const;
-    // void symulujWszystkieByty();
-    // void wyswietlWszystkieByty();
-    // void wyswietlMape();
-    // void obslozInputGracza();  // Nie wiem czy to właściwy sposób na podpięcie tego do SDL3
+
+    inline void SetPlayerInput(glm::vec2 input) { m_Player->SetMovementInputForce(input); }
 };
 
 #endif //ARCADEGAMEPROJECT_GRA_H

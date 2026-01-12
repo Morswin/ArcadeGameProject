@@ -7,11 +7,8 @@
 #include <glm/glm.hpp>
 #include "renderer/renderer_utils.hpp"
 #include "renderer/renderer.hpp"
-#include "renderer/render_mesh.hpp"
-#include "renderer/transform2d.hpp"
 #include "sdl_error.hpp"
 #include "game.hpp"
-#include "player.hpp"
 
 struct MovementInput {
     bool right, left, up, down;
@@ -51,15 +48,12 @@ struct MovementInput {
 static Game* game = nullptr;
 static Renderer* renderer = nullptr;
 static MovementInput movement_input;
-static Player* player = nullptr;
-static RenderMesh* render_mesh = nullptr;
 static unsigned int fps = 0;
 static unsigned int lastDeltaTime = 0;
 static float deltaTime = 0.0f;
 
 
-SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
-{
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     try {
         game = new Game();
     }
@@ -70,28 +64,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     GLCall(glViewport(0, 0, 800, 600));
 
-    /* Data for VBO */
-    float vertices[] = {
-         0.5f,  0.5f, 0.0f, 0.125f, 1.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f,   0.875f,
-         0.5f, -0.5f, 0.0f, 0.125f, 0.875f,
-        -0.5f,  0.5f, 0.0f, 0.0f,   1.0f
-    };
-
-    /* Data for EBO */
-    unsigned int elements[] = {
-        0, 1, 2,
-        1, 0, 3
-    };
-
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-    render_mesh = new RenderMesh(vertices, 20, elements, 6, "resources/food.png");
-    player = new Player();
-    player->SetMesh(render_mesh);
-    // game_element = new GameElement();
-    // game_element->SetMesh(render_mesh);
 
     // Background color
     GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
@@ -101,8 +75,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     return SDL_APP_CONTINUE;
 }
 
-SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
-{
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
     switch (event->type) {
     case SDL_EVENT_QUIT:
         return SDL_APP_SUCCESS;
@@ -153,14 +126,12 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     unsigned int tickStartTime = SDL_GetTicks();
 
     movement_input.UpdateMovement();
-    player->SetMovementInputForce(movement_input.movement);
-    player->Simulate(deltaTime);
+    game->SetPlayerInput(movement_input.movement);
+    game->Simulate(deltaTime);
 
     renderer->Clear();
-    // renderer->Draw(*render_mesh->vao, *render_mesh->ebo, *render_mesh->shader);
-    // game_element->Display(*renderer);
-    player->Display(*renderer);
 
+    game->Draw(renderer);
     game->SwapWindow();
 
     fps++;
@@ -175,9 +146,8 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     return SDL_APP_CONTINUE;
 }
 
-void SDL_AppQuit(void *appstate, SDL_AppResult result)
-{
-    delete render_mesh;
+void SDL_AppQuit(void *appstate, SDL_AppResult result) {
+    // delete render_mesh;
     delete renderer;
     delete game;
 }

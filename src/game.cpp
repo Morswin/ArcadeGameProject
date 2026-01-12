@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include "sdl_error.hpp"
 
-Game::Game() {
+Game::Game() : m_Player(new Player()) {
     SDL_SetAppMetadata("ArcadeGameProject", "0.1", "ArcadeGameProject");
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -47,10 +47,42 @@ Game::Game() {
     }
 
     SDL_GL_SetSwapInterval(1);  // VSync = 1, uncapped = 0, adaprive VSync = -1 (if supported)
+
+    // TODO - move thing below together with meshes to a separate place, prefereably something like hash_map
+    /* Data for player VBO */
+    float vertices[] = {
+        0.5f,  0.5f, 0.0f, 0.125f, 1.0f,
+        -0.5f, -0.5f, 0.0f, 0.0f,   0.875f,
+        0.5f, -0.5f, 0.0f, 0.125f, 0.875f,
+        -0.5f,  0.5f, 0.0f, 0.0f,   1.0f
+    };
+
+    /* Data for player EBO */
+    unsigned int elements[] = {
+        0, 1, 2,
+        1, 0, 3
+    };
+
+    m_PlayerMesh = new RenderMesh(vertices, 20, elements, 6, "resources/food.png");
+    m_Player->SetMesh(m_PlayerMesh);
 }
 
 Game::~Game() {
     SDL_GL_DestroyContext(m_glContext);
+}
+
+void Game::Draw(Renderer* renderer) {
+    // Floor
+    // Walls
+    // Loot
+    // Enemies
+    // Player
+    m_Player->Display(*renderer);
+    // Decorations
+}
+
+void Game::Simulate(float deltaTime) {
+    m_Player->Simulate(deltaTime);
 }
 
 void Game::SwapWindow() const {
@@ -60,4 +92,3 @@ void Game::SwapWindow() const {
 void Game::SetWindowTitle(std::string& name) const {
     SDL_SetWindowTitle(m_Window, name.c_str());
 }
-
