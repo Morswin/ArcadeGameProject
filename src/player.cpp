@@ -8,7 +8,8 @@ Player::~Player() noexcept {
 
 void Player::SetMovementInputForce(glm::vec2 input) {
     if (glm::length(input) > 0.0f) {
-        AddForce(input * m_MovementSpeed);
+        // AddForce(input * m_MovementSpeed);
+        m_Velocity = input * m_MovementSpeed;
         m_IsMoving = true;
     }
 }
