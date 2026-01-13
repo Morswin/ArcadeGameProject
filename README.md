@@ -6,6 +6,8 @@ For more interesting details, see **GDD.md**
 - [x] Add player controls and make player character visible
 - [ ] Add enviroment display (walls and floor)
 - [ ] Add random level generation (just the layout of a level)
+- [ ] Add enemies
+- [ ] Add loot dropping from enemies
 - [ ] Add entity and wall collisions
 ## Optional
 - [x] Maybe it's a good idea to use glm or other already existing library to handle 2d vectors
