@@ -16,12 +16,16 @@ private:
     Shader* m_Shader;
     Texture* m_Texture;
 public:
-    RenderMesh(const float* vertices, unsigned int verticesCount, const unsigned int* elements, unsigned int elementCount, const std::string& texturePath);
+    RenderMesh(const float* vertices, unsigned int verticesCount, const unsigned int* elements, unsigned int elementCount, const std::string& texturePath, int spriteColumns, int spriteRows);
     ~RenderMesh();
+
+    void SetSpriteCoodrdinate(int x, int y);
 
     inline Shader* GetShader() const { return m_Shader; }
     inline VertexArray* GetVAO() const { return m_VAO; }
     inline ElementBuffer* GetEBO() const { return m_EBO; }
+    inline Texture* GetTexture() const { return m_Texture; }
+    // inline void UpdateSpriteUV() { m_Shader->UpdateUV(); }
 };
 
 #endif // RENDER_MESH_H

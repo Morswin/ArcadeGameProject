@@ -51,10 +51,10 @@ Game::Game() : m_Player(new Player()) {
     // TODO - move thing below together with meshes to a separate place, prefereably something like hash_map
     /* Data for player VBO */
     float vertices[] = {
-        0.5f,  0.5f, 0.0f, 0.125f, 1.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f,   0.875f,
-        0.5f, -0.5f, 0.0f, 0.125f, 0.875f,
-        -0.5f,  0.5f, 0.0f, 0.0f,   1.0f
+         0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+        -0.5f,  0.5f, 0.0f, 0.0f, 1.0f
     };
 
     /* Data for player EBO */
@@ -63,11 +63,21 @@ Game::Game() : m_Player(new Player()) {
         1, 0, 3
     };
 
-    m_PlayerMesh = new RenderMesh(vertices, 20, elements, 6, "resources/food.png");
-    m_Player->SetMesh(m_PlayerMesh);
+    m_RenderMeshes["food"] = new RenderMesh(vertices, 20, elements, 6, "resources/food.png", 8, 8);
+    m_RenderMeshes["player"] = new RenderMesh(vertices, 20, elements, 6, "resources/characters.png", 5, 2);
+    m_RenderMeshes["dungeon"] = new RenderMesh(vertices, 20, elements, 6, "resources/dungeon.png", 4, 4);
+    m_RenderMeshes["dungeon_autotile"] = new RenderMesh(vertices, 20, elements, 6, "resources/dungeon_autotile.png", 3, 4);
+
+    m_RenderMeshes["player"]->SetSpriteCoodrdinate(2, 1);  // This should be coordinate of the wizard sprite
+    m_Player->SetMesh(m_RenderMeshes.at("player"));
 }
 
 Game::~Game() {
+    delete m_RenderMeshes["food"];
+    delete m_RenderMeshes["player"];
+    delete m_RenderMeshes["dungeon"];
+    delete m_RenderMeshes["dungeon_autotile"];
+    delete m_Player;
     SDL_GL_DestroyContext(m_glContext);
 }
 

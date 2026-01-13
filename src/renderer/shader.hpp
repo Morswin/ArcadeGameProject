@@ -16,6 +16,10 @@ private:
     std::string m_FilePath;
     unsigned int m_RendererID;
     std::unordered_map<std::string, int> m_UniformLocationCache;
+    int m_SpriteX{0};
+    int m_SpriteY{0};
+    int m_SpriteColumns{1};
+    int m_SpriteRows{1};
 public:
     Shader(const std::string& filepath);
     ~Shader();
@@ -25,8 +29,12 @@ public:
 
     // Set uniforms
     void SetUniform1i(const std::string& name, int value);
-    void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
+    void SetUniform1fv3(const std::string& name, glm::vec3 value);
     void SetUniform1mat4(const std::string& name, glm::mat4 value);
+    void UpdateUV();
+
+    inline void SetSpriteSize(int columns, int rows) { m_SpriteColumns = columns; m_SpriteRows = rows; }
+    inline void SetSpriteCoordinate(int x, int y) { m_SpriteX = x; m_SpriteY = y; }
 private:
     bool CompileShader();
     unsigned int CreateShader(const std::string& vertexShader, const std::string fragmentShader);

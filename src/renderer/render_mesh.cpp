@@ -5,7 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "vertex_buffer_layout.hpp"
 
-RenderMesh::RenderMesh(const float* vertices, unsigned int verticesCount, const unsigned int* elements, unsigned int elementCount, const std::string& texturePath) {
+RenderMesh::RenderMesh(const float* vertices, unsigned int verticesCount, const unsigned int* elements, unsigned int elementCount, const std::string& texturePath, int spriteColumns, int spriteRows) {
     m_VAO = new VertexArray();
     m_VBO = new VertexBuffer(vertices, sizeof(float) * verticesCount);
     m_EBO = new ElementBuffer(elements, elementCount);
@@ -22,6 +22,8 @@ RenderMesh::RenderMesh(const float* vertices, unsigned int verticesCount, const 
     m_Shader->SetUniform1i("u_Texture", 0);
     glm::mat4 projection = glm::ortho(-10.0f, 10.0f, -7.5f, 7.5f, -1.0f, 1.0f);  // This could be declared somewhere else, but I beleive that haveing 1 consistent projection for all elements in this game will be good enough. I will leave it hard coded here. Sorry if that upsets you.
     m_Shader->SetUniform1mat4("u_MVP", projection);
+    m_Shader->SetSpriteSize(spriteColumns, spriteRows);
+    m_Shader->UpdateUV();
     m_VAO->Unbind();
     m_VBO->Unbind();
     m_EBO->Unbind();
@@ -35,3 +37,10 @@ RenderMesh::~RenderMesh() {
     delete m_Shader;
     delete m_Texture;
 }
+
+void RenderMesh::SetSpriteCoodrdinate(int x, int y) {
+    m_Shader->Bind();
+    m_Shader->SetSpriteCoordinate(x, y);
+    m_Shader->UpdateUV();
+}
+

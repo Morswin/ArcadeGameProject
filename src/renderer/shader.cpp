@@ -29,14 +29,19 @@ void Shader::SetUniform1i(const std::string& name, int value) {
     GLCall(glUniform1i(GetUniformLocation(name), value));
 }
 
-void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3) {
-    GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
+void Shader::SetUniform1fv3(const std::string& name, glm::vec3 value) {
+    GLCall(glUniform3fv(GetUniformLocation(name), 1, glm::value_ptr(value)));
 }
 
 void Shader::SetUniform1mat4(const std::string& name, glm::mat4 value) {
     GLCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value)));
 }
 
+void Shader::UpdateUV() {
+    glm::vec3 uvScale(1.0f / m_SpriteColumns, 1.0f / m_SpriteRows, 1.0f);
+    SetUniform1fv3("u_UVScale", uvScale);
+    SetUniform1fv3("u_UVOffset", glm::vec3(uvScale.x * m_SpriteX, uvScale.y * m_SpriteY, 1.0f ));
+}
 
 ShaderProgramSource Shader::ParseShader(const std::string& filepath) {
     std::ifstream stream(filepath);

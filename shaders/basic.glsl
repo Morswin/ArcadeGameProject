@@ -9,10 +9,14 @@ out vec2 v_TexCoord;
 uniform mat4 u_Model;
 uniform mat4 u_MVP;  // Model View Projection
 
+uniform vec3 u_UVScale;
+uniform vec3 u_UVOffset;
+
 void main()
 {
     gl_Position = u_Model * u_MVP * vec4(a_Position, 1.0);
-    v_TexCoord = a_TexCoord;
+//     v_TexCoord = a_TexCoord;
+    v_TexCoord = a_TexCoord * u_UVScale.xy + u_UVOffset.xy;
 }
 
 #shader fragment
