@@ -10,7 +10,6 @@ void Renderer::Clear() const {
 
 void Renderer::Draw(const VertexArray& va, const ElementBuffer& eb, const Shader& shader) const {
     shader.Bind();
-    // uniform
     va.Bind();
     eb.Bind();
     GLCall(glDrawElements(GL_TRIANGLES, eb.GetCount(), GL_UNSIGNED_INT, nullptr));

@@ -25,7 +25,6 @@ public:
     inline VertexArray* GetVAO() const { return m_VAO; }
     inline ElementBuffer* GetEBO() const { return m_EBO; }
     inline Texture* GetTexture() const { return m_Texture; }
-    // inline void UpdateSpriteUV() { m_Shader->UpdateUV(); }
 };
 
 #endif // RENDER_MESH_H

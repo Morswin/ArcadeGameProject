@@ -11,8 +11,6 @@ Game::Game() : m_Player(new Player(2, 1)) {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         std::stringstream ss;
         ss << "Couldn't initialize SDL: " << SDL_GetError() << std::endl;
-        // SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
-        // return SDL_APP_FAILURE;
         throw sdl_error(ss.str());
     }
 
@@ -24,26 +22,20 @@ Game::Game() : m_Player(new Player(2, 1)) {
     if (!m_Window) {
         std::stringstream ss;
         ss << "Failed to create window: " << SDL_GetError() << std::endl;
-        // SDL_Log("Failed to create window: %s", SDL_GetError());
         SDL_Quit();
         throw sdl_error(ss.str());
-        // return SDL_APP_FAILURE;
     }
 
     m_glContext = SDL_GL_CreateContext(m_Window);
     if (!m_glContext) {
         std::stringstream ss;
         ss << "Failed to create GL context: " << SDL_GetError() << std::endl;
-        // SDL_Log("Failed to create GL context: %s", SDL_GetError());
         SDL_Quit();
-        // return SDL_APP_FAILURE;
         throw sdl_error(ss.str());
     }
 
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        // SDL_Log("Failed initialize GLAD");
         SDL_Quit();
-        // return SDL_APP_FAILURE;
         throw sdl_error("Failed initialize GLAD");
     }
 
@@ -71,7 +63,6 @@ Game::Game() : m_Player(new Player(2, 1)) {
     m_RenderMeshes["dungeon_autotile"] = new RenderMesh(vertices, 20, elements, 6, "resources/dungeon_autotile.png", 3, 4);
 
     // Initializing Player
-    // m_RenderMeshes["player"]->SetSpriteCoodrdinate(2, 1);  // This should be coordinate of the wizard sprite
     m_Player->SetMesh(m_RenderMeshes.at("player"));
 
     // Initializing Map

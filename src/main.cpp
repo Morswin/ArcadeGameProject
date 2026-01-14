@@ -129,6 +129,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     game->SetPlayerInput(movement_input.movement);
     game->Simulate(deltaTime);
 
+    // TODO - move the renderer to be a Game field, then adjust how it's accessed
     renderer->Clear();
 
     game->Draw(renderer);
@@ -136,7 +137,6 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     fps++;
     deltaTime = (SDL_GetTicks() - tickStartTime) / 1000.0f;
-    // std::cout << player->GetVelocity().x << " " << player->GetVelocity().y << std::endl;
     if (tickStartTime > lastDeltaTime + 1000) {
         lastDeltaTime = tickStartTime;
         std::string title = "FPS: " + std::to_string(fps);
@@ -147,7 +147,6 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 }
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result) {
-    // delete render_mesh;
     delete renderer;
     delete game;
 }
