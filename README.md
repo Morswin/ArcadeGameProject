@@ -4,7 +4,7 @@ For more interesting details, see **GDD.md**
 # TODO
 ## Important
 - [x] Add player controls and make player character visible
-- [ ] Add enviroment display (walls and floor)
+- [x] Add enviroment display (walls and floor)
 - [ ] Add random level generation (just the layout of a level)
 - [ ] Add enemies
 - [ ] Add loot dropping from enemies
