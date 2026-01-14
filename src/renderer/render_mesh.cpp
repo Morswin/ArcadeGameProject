@@ -20,7 +20,7 @@ RenderMesh::RenderMesh(const float* vertices, unsigned int verticesCount, const 
     m_Texture = new Texture(actualTexPath);
     m_Texture->Bind();
     m_Shader->SetUniform1i("u_Texture", 0);
-    glm::mat4 projection = glm::ortho(-10.0f, 10.0f, -7.5f, 7.5f, -1.0f, 1.0f);  // This could be declared somewhere else, but I beleive that haveing 1 consistent projection for all elements in this game will be good enough. I will leave it hard coded here. Sorry if that upsets you.
+    glm::mat4 projection = glm::ortho(-4.0f, 4.0f, -3.0f, 3.0f, -1.0f, 1.0f);  // This could be declared somewhere else, but I beleive that haveing 1 consistent projection for all elements in this game will be good enough. I will leave it hard coded here. Sorry if that upsets you.
     m_Shader->SetUniform1mat4("u_Projection", projection);
     m_Shader->SetSpriteSize(spriteColumns, spriteRows);
     m_Shader->UpdateUV();
