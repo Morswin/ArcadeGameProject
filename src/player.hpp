@@ -13,7 +13,7 @@ private:
     bool m_IsMoving = false;  // Flag to be enabled with each run of the SetMovementInputForce method, determining whether to slow down or not in the Simulate method.
     // poziomPostaci  // Nie wiem czy tego inaczej nie rozwiążę
 public:
-    Player();
+    Player(int spriteColumn, int spriteRow);
     ~Player() noexcept;
 
     void Simulate(float deltaTime) override;

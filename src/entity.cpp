@@ -1,7 +1,7 @@
 #include "entity.hpp"
 
-Entity::Entity()
-    : GameElement(), m_Velocity(glm::vec2(0.0f)), m_Acceleration(glm::vec2(0.0f)), m_Forces(std::vector<glm::vec2>())
+Entity::Entity(int spriteColumn, int spriteRow)
+    : GameElement(spriteColumn, spriteRow), m_Velocity(glm::vec2(0.0f)), m_Acceleration(glm::vec2(0.0f)), m_Forces(std::vector<glm::vec2>())
 {}
 
 Entity::~Entity() noexcept {

@@ -3,8 +3,9 @@
 #include <sstream>
 #include <glad/glad.h>
 #include "sdl_error.hpp"
+#include "floor.hpp"
 
-Game::Game() : m_Player(new Player()) {
+Game::Game() : m_Player(new Player(2, 1)) {
     SDL_SetAppMetadata("ArcadeGameProject", "0.1", "ArcadeGameProject");
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -63,13 +64,19 @@ Game::Game() : m_Player(new Player()) {
         1, 0, 3
     };
 
+    // Initializing Render Meshes
     m_RenderMeshes["food"] = new RenderMesh(vertices, 20, elements, 6, "resources/food.png", 8, 8);
     m_RenderMeshes["player"] = new RenderMesh(vertices, 20, elements, 6, "resources/characters.png", 5, 2);
     m_RenderMeshes["dungeon"] = new RenderMesh(vertices, 20, elements, 6, "resources/dungeon.png", 4, 4);
     m_RenderMeshes["dungeon_autotile"] = new RenderMesh(vertices, 20, elements, 6, "resources/dungeon_autotile.png", 3, 4);
 
-    m_RenderMeshes["player"]->SetSpriteCoodrdinate(2, 1);  // This should be coordinate of the wizard sprite
+    // Initializing Player
+    // m_RenderMeshes["player"]->SetSpriteCoodrdinate(2, 1);  // This should be coordinate of the wizard sprite
     m_Player->SetMesh(m_RenderMeshes.at("player"));
+
+    // Initializing Map
+    m_Map = new Map();
+    m_Map->RegisterNewEnvironment(0, Floor(1, 3, m_RenderMeshes["dungeon"]));
 }
 
 Game::~Game() {
@@ -78,12 +85,13 @@ Game::~Game() {
     delete m_RenderMeshes["dungeon"];
     delete m_RenderMeshes["dungeon_autotile"];
     delete m_Player;
+    delete m_Map;
     SDL_GL_DestroyContext(m_glContext);
 }
 
 void Game::Draw(Renderer* renderer) {
-    // Floor
-    // Walls
+    // Floors and Walls
+    m_Map->DisplayFloorAndWall(*m_Player);
     // Loot
     // Enemies
     // Player

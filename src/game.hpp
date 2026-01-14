@@ -7,16 +7,17 @@
 #include "renderer/renderer.hpp"
 #include "renderer/render_mesh.hpp"
 #include "player.hpp"
+#include "map.hpp"
 
 class Game
 {
 private:
-    // Mapa m_mapa;
     // Ustawienia& m_ustawienia;
     SDL_Window* m_Window = nullptr;
     SDL_GLContext m_glContext;
     Player* m_Player = nullptr;
     std::map<std::string, RenderMesh*> m_RenderMeshes;
+    Map* m_Map = nullptr;
 public:
     Game();
     ~Game();

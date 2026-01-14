@@ -11,13 +11,8 @@ protected:
     glm::vec2 m_Velocity;
     glm::vec2 m_Acceleration;
     std::vector<glm::vec2> m_Forces;  // Because I'm not implementing mass, this should be rather interpreted as an intention of where I want the Entity to be moved to. Or we can just pretend that everything has the mass of 1 unit. This approach may change in the future.
-
-    // bool m_kolizjaKolo;
-    // bool m_kolizjaKwadrat;
-    // double m_kolizjaKoloŚrenica;
-    // double m_kolizjaKwadratBok;
 public:
-    Entity();
+    Entity(int spriteColumn, int spriteRow);
     ~Entity() noexcept;
 
     // void kolizja(Entity& innyEntity);

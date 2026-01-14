@@ -1,7 +1,8 @@
 #include "player.hpp"
 
-Player::Player() : GameElement(), Entity() {
-}
+Player::Player(int spriteColumn, int spriteRow)
+    : GameElement(spriteColumn, spriteRow), Entity(spriteColumn, spriteRow)
+{}
 
 Player::~Player() noexcept {
 }

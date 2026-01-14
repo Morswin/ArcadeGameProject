@@ -5,7 +5,13 @@
 
 class Environment : virtual public GameElement
 {
-// autotile? autotile()?
+private:
+public:
+    Environment(int spriteColumn, int spriteRow);
+    Environment(int spriteColumn, int spriteRow, RenderMesh* renderMesh);
+    ~Environment() noexcept;
+
+    void Simulate(float deltaTime);
 };
 
 #endif //ENVIRONMENT_H
