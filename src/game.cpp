@@ -91,7 +91,7 @@ Game::~Game() {
 
 void Game::Draw(Renderer* renderer) {
     // Floors and Walls
-    m_Map->DisplayFloorAndWall(*m_Player);
+    m_Map->DisplayFloorAndWall(*m_Player, *renderer);
     // Loot
     // Enemies
     // Player
