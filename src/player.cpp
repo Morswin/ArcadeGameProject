@@ -28,5 +28,13 @@ void Player::Simulate(float deltaTime) {
         }
     }
     Entity::Simulate(deltaTime);
+    m_View = m_Transform.GetPosition();
     m_IsMoving = false;
 }
+
+glm::mat4 Player::GetViewMatrix() const {
+    glm::mat4 view(1.0f);
+    view = glm::translate(view, glm::vec3(-GetView(), 0.0f));
+    return view;
+}
+

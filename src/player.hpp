@@ -18,6 +18,7 @@ public:
 
     void Simulate(float deltaTime) override;
     void SetMovementInputForce(glm::vec2 input);
+    glm::mat4 GetViewMatrix() const;
 
     inline glm::vec2 GetView() const { return m_View; }
     // void zbierzZdobycz();  // Prawdopodobnie wzorzec Obserwator z Zdobyczami, żeby te mogły trafnie reagować na gracza

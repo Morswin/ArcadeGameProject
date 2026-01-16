@@ -86,7 +86,7 @@ void Game::Draw(Renderer* renderer) {
     // Loot
     // Enemies
     // Player
-    m_Player->Display(*renderer);
+    m_Player->Display(*renderer, m_Player->GetViewMatrix());
     // Decorations
 }
 

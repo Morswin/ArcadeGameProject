@@ -26,7 +26,7 @@ void Map::DisplayFloorAndWall(Player& player, Renderer& renderer) {
             auto _dictionaryKey = m_PresentMapData.find(_position);
             if (_dictionaryKey != m_PresentMapData.end()) {
                 m_EnvironmentDictionary.at(_dictionaryKey->second).GetTransform().SetPosition(glm::vec2(1.0f * x, 1.0f * y));
-                m_EnvironmentDictionary.at(_dictionaryKey->second).Display(renderer);
+                m_EnvironmentDictionary.at(_dictionaryKey->second).Display(renderer, player.GetViewMatrix());
             }
         }
     }

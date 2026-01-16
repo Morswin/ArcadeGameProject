@@ -19,13 +19,13 @@ public:
     virtual ~GameElement() = default;
 
     virtual void Simulate(float deltaTime) = 0;
-    void Display(const Renderer& renderer) const;
+    void Display(const Renderer& renderer, glm::mat4 u_ViewMatrix) const;
 
     void SetMesh(RenderMesh* mesh);
     inline Transform2D& GetTransform() { return m_Transform; }
     inline glm::vec2 GetPosition() const { return m_Transform.GetPosition(); }
     inline glm::mat4 GetTransformMatrix() const { return m_Transform.GetMatrix(); }
-    inline void SetSpriteCoodrdinate(int x, int y) { m_SpriteColumn = x; m_SpriteRow = y; }
+    inline void SetSpriteCoordinate(int x, int y) { m_SpriteColumn = x; m_SpriteRow = y; }
 };
 
 #endif //GAME_ELEMENT_H
