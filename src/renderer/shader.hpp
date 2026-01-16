@@ -29,6 +29,7 @@ public:
 
     // Set uniforms
     void SetUniform1i(const std::string& name, int value);
+    void SetUniform1fv2(const std::string& name, glm::vec2 value);
     void SetUniform1fv3(const std::string& name, glm::vec3 value);
     void SetUniform1mat4(const std::string& name, glm::mat4 value);
     void UpdateUV();

@@ -9,15 +9,15 @@ out vec2 v_TexCoord;
 uniform mat4 u_Model;
 uniform mat4 u_Projection;
 
-uniform vec3 u_UVScale;
-uniform vec3 u_UVOffset;
+uniform vec2 u_UVScale;
+uniform vec2 u_UVOffset;
 
 void main()
 {
     // The View should be added between projection and model when it will be introduced.
     // The order of multiplication is important!
     gl_Position = u_Projection * u_Model * vec4(a_Position, 1.0);
-    v_TexCoord = a_TexCoord * u_UVScale.xy + u_UVOffset.xy;
+    v_TexCoord = a_TexCoord * u_UVScale + u_UVOffset ;
 }
 
 #shader fragment
