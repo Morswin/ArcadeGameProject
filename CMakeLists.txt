@@ -67,6 +67,7 @@ add_executable(ArcadeGameProject
     src/entity.cpp
     src/map.hpp
     src/map.cpp
+    src/map_position.hpp
     src/player.hpp
     src/player.cpp
     src/zdobycz.hpp
@@ -79,7 +80,10 @@ add_executable(ArcadeGameProject
     src/strategia_przeciwnika.hpp
     src/przeciwnik.hpp
     src/pocisk.hpp
-    src/pocisk_dekorator.hpp
+    src/rng.hpp
+    src/rng.cpp
+    src/room.hpp
+    src/room.cpp
 
     src/sdl_error.hpp
 

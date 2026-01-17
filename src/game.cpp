@@ -68,6 +68,8 @@ Game::Game() : m_Player(new Player(2, 1)) {
     // Initializing Map
     m_Map = new Map();
     m_Map->RegisterNewEnvironment(0, Floor(1, 3, m_RenderMeshes["dungeon"]));
+    m_Map->RegisterNewEnvironment(1, Floor(3, 3, m_RenderMeshes["dungeon"]));
+    m_Map->RegisterNewEnvironment(10, Floor(0, 3, m_RenderMeshes["dungeon_autotile"]));
 }
 
 Game::~Game() {
@@ -91,6 +93,9 @@ void Game::Draw(Renderer* renderer) {
 }
 
 void Game::Simulate(float deltaTime) {
+    if (m_Map->ShouldPlayerRelocate()) {
+        m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
+    }
     m_Player->Simulate(deltaTime);
 }
 

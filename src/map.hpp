@@ -3,30 +3,33 @@
 
 #include <map>
 #include <glm/glm.hpp>
+#include "map_position.hpp"
 #include "environment.hpp"
 #include "player.hpp"
-
-// Glm vectors don't want to cooperate, so I may be forced to work with this handcrafted atrocity below. I'm sorry that you have to look at this
-struct TilePosition {
-    int x, y;
-
-    bool operator<(const TilePosition& other) const {
-        return std::tie(x, y) < std::tie(other.x, other.y);
-    }
-};
+#include "room.hpp"
 
 class Map
 {
 private:
     glm::vec2 m_VisibleRange;
-    std::map<TilePosition, unsigned int> m_PresentMapData;  // Keeps all of the data related to the corrently loaded level map
+    std::map<MapPosition, unsigned int> m_PresentMapData;  // Keeps all of the data related to the corrently loaded level map
     std::map<unsigned int, Environment> m_EnvironmentDictionary;  // Assigns unsigned int "IDs" for all Environment entries needed for the level map to work properly
+    bool m_RelocatePlayer = false;  // This will be set to true at the end of each map generation; after which player should get relocated to the m_RelocatePlayerLocation value. The relocation should happen somewhere in Game class.
+    glm::vec2 m_RelocatePlayerLocation = glm::vec2{0.0f, 0.0f};  // For more explanation see comment by the m_RelocatePlayer.
+
+    // Data for generating a new map:
+    int m_NumberOfRooms{150};
+    std::map<MapPosition, Room> m_Rooms;
 public:
     Map();
     ~Map();
 
     void DisplayFloorAndWall(Player& player, Renderer& renderer);
     void RegisterNewEnvironment(unsigned int id, Environment&& environment);
+    void GenerateNewMap();
+
+    inline bool ShouldPlayerRelocate() { return m_RelocatePlayer; }
+    inline glm::vec2 GetPlayerStartLocation() { m_RelocatePlayer = false; return m_RelocatePlayerLocation; }
 };
 
 #endif //MAP_H
