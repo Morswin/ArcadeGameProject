@@ -20,7 +20,8 @@ RenderMesh::RenderMesh(const float* vertices, unsigned int verticesCount, const 
     m_Texture = new Texture(actualTexPath);
     m_Texture->Bind();
     m_Shader->SetUniform1i("u_Texture", 0);
-    glm::mat4 projection = glm::ortho(-4.0f, 4.0f, -3.0f, 3.0f, -1.0f, 1.0f);  // This could be declared somewhere else, but I beleive that haveing 1 consistent projection for all elements in this game will be good enough. I will leave it hard coded here. Sorry if that upsets you.
+    glm::mat4 projection = glm::ortho(-6.0f, 6.0f, -4.5f, 4.5f, -1.0f, 1.0f);  // This could be declared somewhere else, but I beleive that haveing 1 consistent projection for all elements in this game will be good enough. I will leave it hard coded here. Sorry if that upsets you.
+    // Initially I thought that this is a good place to write the zoom in and out  functionality, but I figured out, that it won't work unless I put it into the GameElement class' display method. It works now, so I won't be messing with it around, unless necessary.
     m_Shader->SetUniform1mat4("u_Projection", projection);
     m_Shader->SetSpriteSize(spriteColumns, spriteRows);
     m_Shader->UpdateUV();

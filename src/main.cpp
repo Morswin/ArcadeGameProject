@@ -9,6 +9,7 @@
 #include "renderer/renderer.hpp"
 #include "sdl_error.hpp"
 #include "game.hpp"
+#include "settings.hpp"
 
 struct MovementInput {
     bool right, left, up, down;
@@ -96,6 +97,12 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
             break;
         case SDLK_D:
             movement_input.right = true;
+            break;
+        case SDLK_PAGEUP:
+            Settings::GetSettings().ZoomOut();
+            break;
+        case SDLK_PAGEDOWN:
+            Settings::GetSettings().ZoomIn();
             break;
         }
         break;

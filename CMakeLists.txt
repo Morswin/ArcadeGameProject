@@ -70,7 +70,8 @@ add_executable(ArcadeGameProject
     src/player.hpp
     src/player.cpp
     src/zdobycz.hpp
-    src/ustawienia.hpp
+    src/settings.hpp
+    src/settings.cpp
     src/wall.hpp
     src/wall.cpp
     src/floor.hpp
