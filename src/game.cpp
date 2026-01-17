@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include "sdl_error.hpp"
 #include "floor.hpp"
+#include "wall.hpp"
 
 Game::Game() : m_Player(new Player(2, 1)) {
     SDL_SetAppMetadata("ArcadeGameProject", "0.1", "ArcadeGameProject");
@@ -69,7 +70,7 @@ Game::Game() : m_Player(new Player(2, 1)) {
     m_Map = new Map();
     m_Map->RegisterNewEnvironment(0, Floor(1, 3, m_RenderMeshes["dungeon"]));
     m_Map->RegisterNewEnvironment(1, Floor(3, 3, m_RenderMeshes["dungeon"]));
-    m_Map->RegisterNewEnvironment(10, Floor(0, 3, m_RenderMeshes["dungeon_autotile"]));
+    m_Map->RegisterNewEnvironment(10, Wall(0, 3, m_RenderMeshes["dungeon_autotile"]));
 }
 
 Game::~Game() {
