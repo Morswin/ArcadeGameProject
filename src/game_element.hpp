@@ -18,7 +18,7 @@ public:
     GameElement(int spriteColumn, int spriteRow);
     virtual ~GameElement() = default;
 
-    virtual void Simulate(float deltaTime) = 0;
+    // virtual void Simulate(float deltaTime) = 0;
     void Display(const Renderer& renderer, glm::mat4 u_ViewMatrix) const;
 
     void SetMesh(RenderMesh* mesh);

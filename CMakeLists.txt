@@ -84,6 +84,8 @@ add_executable(ArcadeGameProject
     src/rng.cpp
     src/room.hpp
     src/room.cpp
+    src/collision.hpp
+    src/collision.cpp
 
     src/sdl_error.hpp
 

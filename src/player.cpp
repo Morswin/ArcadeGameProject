@@ -2,7 +2,9 @@
 
 Player::Player(int spriteColumn, int spriteRow)
     : GameElement(spriteColumn, spriteRow), Entity(spriteColumn, spriteRow)
-{}
+{
+    m_Transform.SetScale(glm::vec2(0.8f));
+}
 
 Player::~Player() noexcept {
 }
@@ -14,7 +16,7 @@ void Player::SetMovementInputForce(glm::vec2 input) {
     }
 }
 
-void Player::Simulate(float deltaTime) {
+void Player::Simulate(float deltaTime, const std::map<MapPosition, unsigned int>& mapData) {
     if (!m_IsMoving) {
         float friction = 5.0f * deltaTime;
         glm::vec2 target = glm::vec2(0.0f);
@@ -27,7 +29,7 @@ void Player::Simulate(float deltaTime) {
             m_Velocity = m_Velocity + delta / distance * friction;
         }
     }
-    Entity::Simulate(deltaTime);
+    Entity::Simulate(deltaTime, mapData);
     m_View = m_Transform.GetPosition();
     m_IsMoving = false;
 }

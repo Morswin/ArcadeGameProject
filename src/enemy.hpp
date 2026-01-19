@@ -16,7 +16,7 @@ public:
     Enemy(int spriteColumn, int spriteRow);
     ~Enemy() noexcept;
 
-    void Simulate(float deltaTime, const Player& player);
+    void Simulate(float deltaTime, const std::map<MapPosition, unsigned int>& mapData, const Player& player);
     void WanderAround(float deltaTime);
     void ChasePlayer(float deltaTime, const Player& player);
 

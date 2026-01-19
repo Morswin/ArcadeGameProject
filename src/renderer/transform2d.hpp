@@ -16,7 +16,9 @@ public:
     glm::mat4 GetMatrix() const;
 
     inline glm::vec2 GetPosition() const { return m_Position; }
+    inline glm::vec2 GetScale() const { return m_Scale; }
     inline void SetPosition(glm::vec2 position) { m_Position = position; }
+    inline void SetScale(glm::vec2 scale) { m_Scale = scale; }
 };
 
 #endif // TRANSFORM_2D_H

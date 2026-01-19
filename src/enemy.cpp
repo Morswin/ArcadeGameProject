@@ -7,19 +7,21 @@
 
 Enemy::Enemy(int spriteColumn, int spriteRow)
     : GameElement(spriteColumn, spriteRow), Entity(spriteColumn, spriteRow)
-{}
+{
+    m_Transform.SetScale(glm::vec2(0.9f));
+}
 
 Enemy::~Enemy() noexcept {
 }
 
-void Enemy::Simulate(float deltaTime, const Player& player) {
+void Enemy::Simulate(float deltaTime , const std::map<MapPosition, unsigned int>& mapData, const Player& player) {
     if (IsProvoked(player)) {
         ChasePlayer(deltaTime, player);
     }
     else {
         WanderAround(deltaTime);
     }
-    Entity::Simulate(deltaTime);
+    Entity::Simulate(deltaTime, mapData);
 }
 
 void Enemy::ChasePlayer(float deltaTime, const Player& player) {

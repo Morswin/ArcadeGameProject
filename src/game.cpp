@@ -112,13 +112,13 @@ void Game::Draw(Renderer* renderer) {
 void Game::Simulate(float deltaTime) {
     // Enemies
     for (Enemy& _enemy : m_Enemies) {
-        _enemy.Simulate(deltaTime, *m_Player);
+        _enemy.Simulate(deltaTime, m_Map->GetMapData(), *m_Player);
     }
     // Player
     if (m_Map->ShouldPlayerRelocate()) {
         m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
     }
-    m_Player->Simulate(deltaTime);
+    m_Player->Simulate(deltaTime, m_Map->GetMapData());
 }
 
 void Game::SwapWindow() const {

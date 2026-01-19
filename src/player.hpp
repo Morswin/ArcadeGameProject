@@ -16,7 +16,7 @@ public:
     Player(int spriteColumn, int spriteRow);
     ~Player() noexcept;
 
-    void Simulate(float deltaTime) override;
+    void Simulate(float deltaTime, const std::map<MapPosition, unsigned int>& mapData);
     void SetMovementInputForce(glm::vec2 input);
     glm::mat4 GetViewMatrix() const;
 

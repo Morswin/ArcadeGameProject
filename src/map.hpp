@@ -34,6 +34,7 @@ public:
 
     inline bool ShouldPlayerRelocate() { return m_RelocatePlayer; }
     inline glm::vec2 GetPlayerStartLocation() { m_RelocatePlayer = false; return m_RelocatePlayerLocation; }
+    inline std::map<MapPosition, unsigned int>& GetMapData() { return m_PresentMapData; }
 };
 
 #endif //MAP_H
