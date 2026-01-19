@@ -22,6 +22,7 @@ public:
     void Simulate(float deltaTime, const std::map<MapPosition, unsigned int>& mapData);
     void AddForce(glm::vec2 force);
     bool CollidesWithMap(const std::map<MapPosition, unsigned int>& mapData) const;
+    bool Overlaps(const Entity& other) const;
 
     inline glm::vec2 GetVelocity() const { return m_Velocity; }
 };

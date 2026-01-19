@@ -60,4 +60,7 @@ bool Entity::CollidesWithMap(const std::map<MapPosition, unsigned int>& mapData)
     return false;
 }
 
-
+bool Entity::Overlaps(const Entity& other) const
+{
+    return m_Collision.Intersects(other.m_Collision, m_Transform, other.m_Transform);
+}
