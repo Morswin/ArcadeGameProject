@@ -13,6 +13,7 @@ public:
 
     static RNG& GetRNG();
     int GetNextInt(int min, int max);
+    float GetNextFloat(float min, float max);
 
     inline void Seed(int seed) { m_Engine.seed(seed); }
     inline double GetNextNormal() { return m_NormalDistribution(m_Engine); }

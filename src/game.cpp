@@ -79,14 +79,11 @@ Game::Game() : m_Player(new Player(2, 1)) {
 
     m_Enemies.clear();
     m_Enemies = m_Map->PopulateMapWithEnemies(0.2, m_RenderMeshes.at("characters"));
-    std::cout << "Before: " << m_Enemies.size() << std::endl;
     std::erase_if(m_Enemies, [&](const Enemy& _enemy) {
         const float _difference = glm::distance(_enemy.GetTransform().GetPosition(), m_Player->GetTransform().GetPosition());
         const double _erasureRange = _enemy.GetDetectionRange() * 1.5;
-        // std::cout << (_difference < _erasureRange) << "\t" << _difference << "\t" << _erasureRange << std::endl;
         return _difference < _erasureRange;
     });
-    std::cout << "After: " << m_Enemies.size() << std::endl;
 }
 
 Game::~Game() {
@@ -113,6 +110,11 @@ void Game::Draw(Renderer* renderer) {
 }
 
 void Game::Simulate(float deltaTime) {
+    // Enemies
+    for (Enemy& _enemy : m_Enemies) {
+        _enemy.Simulate(deltaTime, *m_Player);
+    }
+    // Player
     if (m_Map->ShouldPlayerRelocate()) {
         m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
     }

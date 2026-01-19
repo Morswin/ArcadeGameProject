@@ -9,7 +9,7 @@ RNG::RNG()
     Seed(seed);  // There will be only one see
 }
 
-RNG & RNG::GetRNG() {
+RNG& RNG::GetRNG() {
     static RNG rngInstance;
     return rngInstance;
 }
@@ -19,3 +19,7 @@ int RNG::GetNextInt(int min, int max) {
     return _distribution(m_Engine);
 }
 
+float RNG::GetNextFloat(float min, float max) {
+    std::uniform_real_distribution<float> _distribution(min, max);
+    return _distribution(m_Engine);
+}
