@@ -9,7 +9,6 @@ class Room {
 private:
     unsigned int m_Width;
     unsigned int m_Height;
-    unsigned int m_Radius;
     // Position will be calculated from the lower-left corner of the room
     int m_PositionX;
     int m_PositionY;

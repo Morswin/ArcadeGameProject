@@ -1,7 +1,6 @@
 #include "map.hpp"
 
 #include <cmath>
-#include <vector>
 #include <iostream>
 #include <algorithm>
 #include "rng.hpp"
@@ -35,6 +34,27 @@ void Map::DisplayFloorAndWall(Player& player, Renderer& renderer) {
 
 void Map::RegisterNewEnvironment(unsigned int id, Environment&& environment) {
     m_EnvironmentDictionary.emplace(id, std::move(environment));
+}
+
+std::vector<Enemy> Map::PopulateMapWithEnemies(double percentage, RenderMesh* enemyRenderMesh) {
+    std::vector<MapPosition> _possiblePositions;
+    for (const auto& [_position, value] : m_PresentMapData) {
+        if (value == 0 || value == 1) _possiblePositions.push_back(_position);
+    }
+    std::shuffle(_possiblePositions.begin(), _possiblePositions.end(), RNG::GetRNG().GetRNGEngine());
+    const size_t _enemyCount = std::min(static_cast<size_t>(std::ceil(_possiblePositions.size() * percentage)), _possiblePositions.size());
+    std::vector<Enemy> _enemies;
+    _enemies.reserve(_enemyCount);
+    for (size_t i = 0; i < _enemyCount; i++) {
+        Enemy _enemy(0, 0);
+        _enemy.SetMesh(enemyRenderMesh);
+        _enemy.GetTransform().SetPosition(glm::vec2(
+            _possiblePositions[i].x,
+            _possiblePositions[i].y
+        ));
+        _enemies.push_back(_enemy);
+    }
+    return _enemies;
 }
 
 struct UnionFind {

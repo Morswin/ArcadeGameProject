@@ -77,8 +77,8 @@ add_executable(ArcadeGameProject
     src/wall.cpp
     src/floor.hpp
     src/floor.cpp
-    src/strategia_przeciwnika.hpp
-    src/przeciwnik.hpp
+    src/enemy.hpp
+    src/enemy.cpp
     src/pocisk.hpp
     src/rng.hpp
     src/rng.cpp

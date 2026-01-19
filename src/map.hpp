@@ -2,11 +2,14 @@
 #define MAP_H
 
 #include <map>
+#include <vector>
 #include <glm/glm.hpp>
+#include "renderer/render_mesh.hpp"
 #include "map_position.hpp"
 #include "environment.hpp"
 #include "player.hpp"
 #include "room.hpp"
+#include "enemy.hpp"
 
 class Map
 {
@@ -27,6 +30,7 @@ public:
     void DisplayFloorAndWall(Player& player, Renderer& renderer);
     void RegisterNewEnvironment(unsigned int id, Environment&& environment);
     void GenerateNewMap();
+    std::vector<Enemy> PopulateMapWithEnemies(double percentage, RenderMesh* enemyRenderMesh);
 
     inline bool ShouldPlayerRelocate() { return m_RelocatePlayer; }
     inline glm::vec2 GetPlayerStartLocation() { m_RelocatePlayer = false; return m_RelocatePlayerLocation; }

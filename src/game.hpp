@@ -3,11 +3,13 @@
 
 #include <string>
 #include <map>
+#include <vector>
 #include <SDL3/SDL.h>
 #include "renderer/renderer.hpp"
 #include "renderer/render_mesh.hpp"
 #include "player.hpp"
 #include "map.hpp"
+#include "enemy.hpp"
 
 class Game
 {
@@ -18,6 +20,7 @@ private:
     Player* m_Player = nullptr;
     std::map<std::string, RenderMesh*> m_RenderMeshes;
     Map* m_Map = nullptr;
+    std::vector<Enemy> m_Enemies {};
 public:
     Game();
     ~Game();

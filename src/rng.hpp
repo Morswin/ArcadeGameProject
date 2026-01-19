@@ -16,6 +16,7 @@ public:
 
     inline void Seed(int seed) { m_Engine.seed(seed); }
     inline double GetNextNormal() { return m_NormalDistribution(m_Engine); }
+    inline std::mt19937& GetRNGEngine() { return m_Engine; }
 private:
     RNG();
 };

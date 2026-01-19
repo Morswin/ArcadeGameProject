@@ -23,6 +23,7 @@ public:
 
     void SetMesh(RenderMesh* mesh);
     inline Transform2D& GetTransform() { return m_Transform; }
+    inline const Transform2D& GetTransform() const { return m_Transform; }
     inline glm::vec2 GetPosition() const { return m_Transform.GetPosition(); }
     inline glm::mat4 GetTransformMatrix() const { return m_Transform.GetMatrix(); }
     inline void SetSpriteCoordinate(int x, int y) { m_SpriteColumn = x; m_SpriteRow = y; }

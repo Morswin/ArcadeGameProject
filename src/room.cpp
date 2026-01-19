@@ -5,9 +5,7 @@ int Room::nextRoomId = 0;
 
 Room::Room(unsigned int width, unsigned int height, int x, int y)
     : m_Width(width), m_Height(height), m_PositionX(x), m_PositionY(y), m_ID(Room::nextRoomId++)
-{
-    m_Radius = static_cast<unsigned int>(std::ceil(std::sqrt(1.0 * width * width + 1.0 * height * height)));
-}
+{}
 
 Room::~Room() {
 }

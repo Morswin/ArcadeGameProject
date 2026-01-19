@@ -1,6 +1,7 @@
 #include "game.hpp"
 
 #include <sstream>
+#include <iostream>
 #include <glad/glad.h>
 #include "sdl_error.hpp"
 #include "floor.hpp"
@@ -59,23 +60,38 @@ Game::Game() : m_Player(new Player(2, 1)) {
 
     // Initializing Render Meshes
     m_RenderMeshes["food"] = new RenderMesh(vertices, 20, elements, 6, "resources/food.png", 8, 8);
-    m_RenderMeshes["player"] = new RenderMesh(vertices, 20, elements, 6, "resources/characters.png", 5, 2);
+    m_RenderMeshes["characters"] = new RenderMesh(vertices, 20, elements, 6, "resources/characters.png", 5, 2);
     m_RenderMeshes["dungeon"] = new RenderMesh(vertices, 20, elements, 6, "resources/dungeon.png", 4, 4);
     m_RenderMeshes["dungeon_autotile"] = new RenderMesh(vertices, 20, elements, 6, "resources/dungeon_autotile.png", 3, 4);
 
     // Initializing Player
-    m_Player->SetMesh(m_RenderMeshes.at("player"));
+    m_Player->SetMesh(m_RenderMeshes.at("characters"));
 
     // Initializing Map
     m_Map = new Map();
     m_Map->RegisterNewEnvironment(0, Floor(1, 3, m_RenderMeshes["dungeon"]));
     m_Map->RegisterNewEnvironment(1, Floor(3, 3, m_RenderMeshes["dungeon"]));
     m_Map->RegisterNewEnvironment(10, Wall(0, 3, m_RenderMeshes["dungeon_autotile"]));
+
+    if (m_Map->ShouldPlayerRelocate()) {
+        m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
+    }
+
+    m_Enemies.clear();
+    m_Enemies = m_Map->PopulateMapWithEnemies(0.2, m_RenderMeshes.at("characters"));
+    std::cout << "Before: " << m_Enemies.size() << std::endl;
+    std::erase_if(m_Enemies, [&](const Enemy& _enemy) {
+        const float _difference = glm::distance(_enemy.GetTransform().GetPosition(), m_Player->GetTransform().GetPosition());
+        const double _erasureRange = _enemy.GetDetectionRange() * 1.5;
+        // std::cout << (_difference < _erasureRange) << "\t" << _difference << "\t" << _erasureRange << std::endl;
+        return _difference < _erasureRange;
+    });
+    std::cout << "After: " << m_Enemies.size() << std::endl;
 }
 
 Game::~Game() {
     delete m_RenderMeshes["food"];
-    delete m_RenderMeshes["player"];
+    delete m_RenderMeshes["characters"];
     delete m_RenderMeshes["dungeon"];
     delete m_RenderMeshes["dungeon_autotile"];
     delete m_Player;
@@ -88,6 +104,9 @@ void Game::Draw(Renderer* renderer) {
     m_Map->DisplayFloorAndWall(*m_Player, *renderer);
     // Loot
     // Enemies
+    for (const Enemy& _enemy : m_Enemies) {
+        _enemy.Display(*renderer, m_Player->GetViewMatrix());
+    }
     // Player
     m_Player->Display(*renderer, m_Player->GetViewMatrix());
     // Decorations
