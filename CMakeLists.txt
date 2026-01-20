@@ -80,14 +80,14 @@ add_executable(ArcadeGameProject
     src/enemy.hpp
     src/enemy.cpp
     src/pocisk.hpp
-    src/rng.hpp
-    src/rng.cpp
     src/room.hpp
     src/room.cpp
     src/collision.hpp
     src/collision.cpp
 
-    src/sdl_error.hpp
+    src/utils/rng.hpp
+    src/utils/rng.cpp
+    src/utils/sdl_error.hpp
 
     src/third_party/glad/glad.c
     src/third_party/stb/stb_image.h

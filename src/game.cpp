@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <glad/glad.h>
-#include "sdl_error.hpp"
+#include "utils/sdl_error.hpp"
 #include "floor.hpp"
 #include "wall.hpp"
 

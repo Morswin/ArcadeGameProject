@@ -3,7 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
-#include "rng.hpp"
+#include "utils/rng.hpp"
 
 // TODO - move the change of visibility range to display, and make it react to the change in zoom setting
 Map::Map() : m_VisibleRange(glm::vec2(10.0f, 8.0f)) {

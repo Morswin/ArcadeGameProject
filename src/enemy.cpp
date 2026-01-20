@@ -3,7 +3,7 @@
 #include <numbers>
 #include <cmath>
 #include <glm/glm.hpp>
-#include "rng.hpp"
+#include "utils/rng.hpp"
 
 Enemy::Enemy(int spriteColumn, int spriteRow)
     : GameElement(spriteColumn, spriteRow), Entity(spriteColumn, spriteRow)

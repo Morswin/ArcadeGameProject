@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include "renderer/renderer_utils.hpp"
 #include "renderer/renderer.hpp"
-#include "sdl_error.hpp"
+#include "utils/sdl_error.hpp"
 #include "game.hpp"
 #include "settings.hpp"
 
