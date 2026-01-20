@@ -77,13 +77,7 @@ Game::Game() : m_Player(new Player(2, 1)) {
         m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
     }
 
-    m_Enemies.clear();
-    m_Enemies = m_Map->PopulateMapWithEnemies(0.2, m_RenderMeshes.at("characters"));
-    std::erase_if(m_Enemies, [&](const Enemy& _enemy) {
-        const float _difference = glm::distance(_enemy.GetTransform().GetPosition(), m_Player->GetTransform().GetPosition());
-        const double _erasureRange = _enemy.GetDetectionRange() * 1.5;
-        return _difference < _erasureRange;
-    });
+    PopulateMapWithEnemies();
 }
 
 Game::~Game() {
@@ -106,19 +100,42 @@ void Game::Draw(Renderer* renderer) {
     }
     // Player
     m_Player->Display(*renderer, m_Player->GetViewMatrix());
-    // Decorations
+    // Decorations?
+    // Projectiles
 }
 
 void Game::Simulate(float deltaTime) {
-    // Enemies
-    for (Enemy& _enemy : m_Enemies) {
-        _enemy.Simulate(deltaTime, m_Map->GetMapData(), *m_Player);
+    if (m_Player->IsAlive()) {
+        // Enemies
+        for (Enemy& _enemy : m_Enemies) {
+            _enemy.Simulate(deltaTime, m_Map->GetMapData(), *m_Player);
+            if (_enemy.Overlaps(*m_Player)) {
+                m_Player->DamagePlayer(deltaTime, _enemy.GetContactDamagePerSecond());
+            }
+        }
+        // Player
+        if (m_Map->ShouldPlayerRelocate()) {
+            m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
+        }
+        m_Player->Simulate(deltaTime, m_Map->GetMapData());
     }
-    // Player
-    if (m_Map->ShouldPlayerRelocate()) {
+    else {
+        // This is a good place to show some Game Over UI, once it's'
+        m_Map->GenerateNewMap();
         m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
+        PopulateMapWithEnemies();
+        m_Player->HealCompletely();
     }
-    m_Player->Simulate(deltaTime, m_Map->GetMapData());
+}
+
+void Game::PopulateMapWithEnemies() {
+    m_Enemies.clear();
+    m_Enemies = m_Map->PopulateMapWithEnemies(0.2, m_RenderMeshes.at("characters"));
+    std::erase_if(m_Enemies, [&](const Enemy& _enemy) {
+        const float _difference = glm::distance(_enemy.GetTransform().GetPosition(), m_Player->GetTransform().GetPosition());
+        const double _erasureRange = _enemy.GetDetectionRange() * 1.5;
+        return _difference < _erasureRange;
+    });
 }
 
 void Game::SwapWindow() const {

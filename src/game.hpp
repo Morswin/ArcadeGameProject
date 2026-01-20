@@ -14,7 +14,6 @@
 class Game
 {
 private:
-    // Ustawienia& m_ustawienia;
     SDL_Window* m_Window = nullptr;
     SDL_GLContext m_glContext;
     Player* m_Player = nullptr;
@@ -29,6 +28,7 @@ public:
     void Simulate(float deltaTime);
     void SwapWindow() const;
     void SetWindowTitle(std::string& name) const;
+    void PopulateMapWithEnemies();
 
     inline void SetPlayerInput(glm::vec2 input) { m_Player->SetMovementInputForce(input); }
 };
