@@ -25,6 +25,7 @@ public:
     bool Overlaps(const Entity& other) const;
 
     inline glm::vec2 GetVelocity() const { return m_Velocity; }
+    inline void SetVelocity(const glm::vec2& velocity) { m_Velocity = velocity; }
 };
 
 #endif //ENTITY_H

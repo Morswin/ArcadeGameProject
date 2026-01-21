@@ -19,6 +19,7 @@ public:
     inline glm::vec2 GetScale() const { return m_Scale; }
     inline void SetPosition(glm::vec2 position) { m_Position = position; }
     inline void SetScale(glm::vec2 scale) { m_Scale = scale; }
+    inline void SetRotation(float rotation) { m_Rotation = rotation; }
 };
 
 #endif // TRANSFORM_2D_H

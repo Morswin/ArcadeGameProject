@@ -13,6 +13,7 @@ private:
     float m_WanderCounterTarget{0.5f};  // How often those changes will occur in seconds
     float m_ChaseSpeed{0.6f};
     double m_ContactDamagePerSecond{20.0};
+    int m_EnemyHealth{30};
 public:
     Enemy(int spriteColumn, int spriteRow);
     ~Enemy() noexcept;
@@ -21,7 +22,9 @@ public:
     void WanderAround(float deltaTime);
     void ChasePlayer(float deltaTime, const Player& player);
 
+    inline bool IsAlive() const { return m_EnemyHealth > 0; }
     inline bool IsProvoked(const Player& player) const { return glm::distance(GetPosition(), player.GetPosition()) < m_DetectionRange; }
+    inline void TakeDamage(int amount) { m_EnemyHealth -= amount; }
     inline double GetDetectionRange() const { return m_DetectionRange; }
     inline double GetContactDamagePerSecond() const { return m_ContactDamagePerSecond; }
 };

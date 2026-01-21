@@ -10,6 +10,7 @@
 #include "player.hpp"
 #include "map.hpp"
 #include "enemy.hpp"
+#include "projectile.hpp"
 
 class Game
 {
@@ -19,7 +20,8 @@ private:
     Player* m_Player = nullptr;
     std::map<std::string, RenderMesh*> m_RenderMeshes;
     Map* m_Map = nullptr;
-    std::vector<Enemy> m_Enemies {};
+    std::vector<Enemy> m_Enemies{};
+    std::vector<Projectile> m_Projectiles{};
 public:
     Game();
     ~Game();
@@ -31,6 +33,8 @@ public:
     void PopulateMapWithEnemies();
 
     inline void SetPlayerInput(glm::vec2 input) { m_Player->SetMovementInputForce(input); }
+private:
+    bool IsEnemyInPlayerRange();
 };
 
 #endif //GAME_H

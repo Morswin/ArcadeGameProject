@@ -79,11 +79,12 @@ add_executable(ArcadeGameProject
     src/floor.cpp
     src/enemy.hpp
     src/enemy.cpp
-    src/pocisk.hpp
     src/room.hpp
     src/room.cpp
     src/collision.hpp
     src/collision.cpp
+    src/projectile.hpp
+    src/projectile.cpp
 
     src/utils/rng.hpp
     src/utils/rng.cpp

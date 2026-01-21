@@ -17,6 +17,7 @@ void Player::SetMovementInputForce(glm::vec2 input) {
 }
 
 void Player::Simulate(float deltaTime, const std::map<MapPosition, unsigned int>& mapData) {
+    m_CurrentProjectileReadiness += deltaTime;
     if (!m_IsMoving) {
         float friction = 5.0f * deltaTime;
         glm::vec2 target = glm::vec2(0.0f);

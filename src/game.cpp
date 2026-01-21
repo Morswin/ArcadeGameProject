@@ -63,6 +63,7 @@ Game::Game() : m_Player(new Player(2, 1)) {
     m_RenderMeshes["characters"] = new RenderMesh(vertices, 20, elements, 6, "resources/characters.png", 5, 2);
     m_RenderMeshes["dungeon"] = new RenderMesh(vertices, 20, elements, 6, "resources/dungeon.png", 4, 4);
     m_RenderMeshes["dungeon_autotile"] = new RenderMesh(vertices, 20, elements, 6, "resources/dungeon_autotile.png", 3, 4);
+    m_RenderMeshes["projectile"] = new RenderMesh(vertices, 20, elements, 6, "resources/projectile.png", 1, 1);
 
     // Initializing Player
     m_Player->SetMesh(m_RenderMeshes.at("characters"));
@@ -100,13 +101,18 @@ void Game::Draw(Renderer* renderer) {
     }
     // Player
     m_Player->Display(*renderer, m_Player->GetViewMatrix());
-    // Decorations?
     // Projectiles
+    for (const Projectile& _projectile : m_Projectiles) {
+        _projectile.Display(*renderer, m_Player->GetViewMatrix());
+    }
 }
 
 void Game::Simulate(float deltaTime) {
-    if (m_Player->IsAlive()) {
+    if (m_Player->IsAlive() && !m_Enemies.empty()) {
         // Enemies
+        std::erase_if(m_Enemies, [](const Enemy& _enemy) {
+            return !_enemy.IsAlive();
+        });
         for (Enemy& _enemy : m_Enemies) {
             _enemy.Simulate(deltaTime, m_Map->GetMapData(), *m_Player);
             if (_enemy.Overlaps(*m_Player)) {
@@ -118,9 +124,53 @@ void Game::Simulate(float deltaTime) {
             m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
         }
         m_Player->Simulate(deltaTime, m_Map->GetMapData());
+        // Projectiles
+        if (m_Player->IsReadyToFire() && !m_Enemies.empty() && IsEnemyInPlayerRange()) {
+            Projectile _projectile(0, 0);
+            _projectile.SetMesh(m_RenderMeshes["projectile"]);
+            _projectile.GetTransform().SetPosition(m_Player->GetTransform().GetPosition());
+            _projectile.GetTransform().SetScale(glm::vec2(0.2f));
+            const glm::vec2 projectilePos = _projectile.GetTransform().GetPosition();
+            Enemy* closestEnemy = nullptr;
+            float closestDistSq = std::numeric_limits<float>::max();
+            for (Enemy& enemy : m_Enemies) {
+                const glm::vec2 enemyPos = enemy.GetTransform().GetPosition();
+                const glm::vec2 diff = enemyPos - projectilePos;
+                const float distSq = glm::dot(diff, diff);
+                if (distSq < closestDistSq) {
+                    closestDistSq = distSq;
+                    closestEnemy = &enemy;
+                }
+            }
+            if (closestEnemy) {
+                glm::vec2 direction = glm::normalize(closestEnemy->GetTransform().GetPosition() - projectilePos);
+                const float projectileSpeed = 3.0f;
+                _projectile.SetVelocity(direction * projectileSpeed);
+                _projectile.AddForce(direction * (projectileSpeed * 0.1f));
+            }
+            m_Projectiles.push_back(_projectile);
+            m_Player->ResetFireReadiness();
+        }
+        for (Projectile& _projectile : m_Projectiles) {
+            _projectile.Simulate(deltaTime, m_Map->GetMapData());
+        }
+        for (Projectile& _projectile : m_Projectiles) {
+            for (Enemy& _enemy : m_Enemies) {
+                if (!_enemy.IsAlive()) continue;
+                if (_projectile.Overlaps(_enemy)) {
+                    _enemy.TakeDamage(_projectile.GetDamage());
+                    _projectile.OnHitEnemy();
+                    break;
+                }
+            }
+        }
+        std::erase_if(m_Projectiles, [](const Projectile& _projectile) {
+            return _projectile.ReadyForDeletion();
+        });
     }
     else {
         // This is a good place to show some Game Over UI, once it's'
+        // Or something regarding wenturing to the next level if all enemies have been killed
         m_Map->GenerateNewMap();
         m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
         PopulateMapWithEnemies();
@@ -145,3 +195,16 @@ void Game::SwapWindow() const {
 void Game::SetWindowTitle(std::string& name) const {
     SDL_SetWindowTitle(m_Window, name.c_str());
 }
+
+bool Game::IsEnemyInPlayerRange() {
+    const float _rangeSq = std::pow(m_Player->GetRange(), 2);
+    for (const Enemy& _enemy : m_Enemies) {
+        if (!_enemy.IsAlive()) continue;
+        const glm::vec2 _delta = _enemy.GetTransform().GetPosition() - m_Player->GetTransform().GetPosition();
+        if (glm::dot(_delta, _delta) <= _rangeSq) {
+            return true;
+        }
+    }
+    return false;
+}
+
