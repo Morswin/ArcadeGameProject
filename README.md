@@ -14,3 +14,6 @@ For more interesting details, see **GDD.md**
 - [x] Maybe it's a good idea to use glm or other already existing library to handle 2d vectors
 - [ ] Tidy up the makelists.txt and the directory/file structure
 - [ ] Add UI with ImGUI
+
+# Credits to resources are listed in
+resources/sources.md
