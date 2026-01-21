@@ -4,6 +4,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include "utils/sdl_error.hpp"
+#include "utils/rng.hpp"
 #include "floor.hpp"
 #include "wall.hpp"
 
@@ -95,6 +96,9 @@ void Game::Draw(Renderer* renderer) {
     // Floors and Walls
     m_Map->DisplayFloorAndWall(*m_Player, *renderer);
     // Loot
+    for (const Loot& _loot : m_Loot) {
+        _loot.Display(*renderer, m_Player->GetViewMatrix());
+    }
     // Enemies
     for (const Enemy& _enemy : m_Enemies) {
         _enemy.Display(*renderer, m_Player->GetViewMatrix());
@@ -110,6 +114,13 @@ void Game::Draw(Renderer* renderer) {
 void Game::Simulate(float deltaTime) {
     if (m_Player->IsAlive() && !m_Enemies.empty()) {
         // Enemies
+        for (const Enemy& _enemy : m_Enemies) {
+            if (!_enemy.IsAlive() && RNG::GetRNG().GetNextInt(0, 10) <= 4) {
+                Loot _loot(m_RenderMeshes["food"]);
+                _loot.GetTransform().SetPosition(_enemy.GetTransform().GetPosition());
+                m_Loot.push_back(_loot);
+            }
+        }
         std::erase_if(m_Enemies, [](const Enemy& _enemy) {
             return !_enemy.IsAlive();
         });
@@ -124,6 +135,15 @@ void Game::Simulate(float deltaTime) {
             m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
         }
         m_Player->Simulate(deltaTime, m_Map->GetMapData());
+        // Loot
+        std::erase_if(m_Loot, [&](Loot& _loot) {
+            if (_loot.Overlaps(*m_Player)) {
+                m_Player->HealByAmount(_loot.GetRestoredHealth());
+                return true;
+            }
+            return false;
+        });
+        // Here Loot can be simulated if such need would arise.
         // Projectiles
         if (m_Player->IsReadyToFire() && !m_Enemies.empty() && IsEnemyInPlayerRange()) {
             Projectile _projectile(0, 0);
@@ -168,6 +188,7 @@ void Game::Simulate(float deltaTime) {
             return _projectile.ReadyForDeletion();
         });
     }
+    // Here I can distinguish various reasons why the level should be regenerated
     else {
         // This is a good place to show some Game Over UI, once it's'
         // Or something regarding wenturing to the next level if all enemies have been killed
@@ -192,8 +213,10 @@ void Game::SwapWindow() const {
     SDL_GL_SwapWindow(m_Window);
 }
 
-void Game::SetWindowTitle(std::string& name) const {
-    SDL_SetWindowTitle(m_Window, name.c_str());
+void Game::SetWindowTitle(unsigned int fps) const {
+    std::stringstream title;
+    title << "FPS: " << fps << " Player health: " << m_Player->GetHealth() << "%";
+    SDL_SetWindowTitle(m_Window, title.str().c_str());
 }
 
 bool Game::IsEnemyInPlayerRange() {

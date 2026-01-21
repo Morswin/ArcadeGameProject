@@ -70,7 +70,6 @@ add_executable(ArcadeGameProject
     src/map_position.hpp
     src/player.hpp
     src/player.cpp
-    src/zdobycz.hpp
     src/settings.hpp
     src/settings.cpp
     src/wall.hpp
@@ -85,6 +84,8 @@ add_executable(ArcadeGameProject
     src/collision.cpp
     src/projectile.hpp
     src/projectile.cpp
+    src/loot.hpp
+    src/loot.cpp
 
     src/utils/rng.hpp
     src/utils/rng.cpp

@@ -41,3 +41,8 @@ glm::mat4 Player::GetViewMatrix() const {
     return view;
 }
 
+void Player::HealByAmount(double amount) {
+    m_CurrentHealthPoints += amount;
+    if (m_CurrentHealthPoints > m_InitialHealthPoints) m_CurrentHealthPoints = m_InitialHealthPoints;
+}
+

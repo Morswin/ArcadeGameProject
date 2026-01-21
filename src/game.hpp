@@ -11,6 +11,7 @@
 #include "map.hpp"
 #include "enemy.hpp"
 #include "projectile.hpp"
+#include "loot.hpp"
 
 class Game
 {
@@ -22,6 +23,7 @@ private:
     Map* m_Map = nullptr;
     std::vector<Enemy> m_Enemies{};
     std::vector<Projectile> m_Projectiles{};
+    std::vector<Loot> m_Loot{};
 public:
     Game();
     ~Game();
@@ -29,11 +31,11 @@ public:
     void Draw(Renderer* renderer);
     void Simulate(float deltaTime);
     void SwapWindow() const;
-    void SetWindowTitle(std::string& name) const;
-    void PopulateMapWithEnemies();
+    void SetWindowTitle(unsigned int fps) const;
 
     inline void SetPlayerInput(glm::vec2 input) { m_Player->SetMovementInputForce(input); }
 private:
+    void PopulateMapWithEnemies();
     bool IsEnemyInPlayerRange();
 };
 

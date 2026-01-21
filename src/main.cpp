@@ -146,8 +146,8 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     deltaTime = (SDL_GetTicks() - tickStartTime) / 1000.0f;
     if (tickStartTime > lastDeltaTime + 1000) {
         lastDeltaTime = tickStartTime;
-        std::string title = "FPS: " + std::to_string(fps);
-        game->SetWindowTitle(title);
+        // std::string title = "FPS: " + std::to_string(fps);
+        game->SetWindowTitle(fps);
         fps = 0;
     }
     return SDL_APP_CONTINUE;

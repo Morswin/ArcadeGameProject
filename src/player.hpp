@@ -23,6 +23,7 @@ public:
     void Simulate(float deltaTime, const std::map<MapPosition, unsigned int>& mapData);
     void SetMovementInputForce(glm::vec2 input);
     glm::mat4 GetViewMatrix() const;
+    void HealByAmount(double amount);
 
     inline glm::vec2 GetView() const { return m_View; }
     inline bool IsAlive() const { return m_CurrentHealthPoints > 0.0; }
@@ -31,6 +32,7 @@ public:
     inline bool IsReadyToFire() const { return m_CurrentProjectileReadiness > m_ProjectileFireRate; }
     inline void ResetFireReadiness() { m_CurrentProjectileReadiness = 0.0; }
     inline double GetRange() const { return m_DetectionRange; }
+    inline double GetHealth() const { return m_CurrentHealthPoints; }
 };
 
 #endif //PLAYER_H
