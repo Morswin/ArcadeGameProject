@@ -192,6 +192,8 @@ void Game::Simulate(float deltaTime) {
     else {
         // This is a good place to show some Game Over UI, once it's'
         // Or something regarding wenturing to the next level if all enemies have been killed
+        m_Loot.clear();
+        m_Projectiles.clear();
         m_Map->GenerateNewMap();
         m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
         PopulateMapWithEnemies();
