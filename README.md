@@ -1,19 +1,11 @@
-# Project under construction. 
-For more interesting details, see **GDD.md**
+# About the repo
+Project is now in **1.0.0v**, made purely to pass classes at my university course.
 
-# TODO
-## Important
-- [x] Add player controls and make player character visible
-- [x] Add enviroment display (walls and floor)
-- [x] Add random level generation (just the layout of a level)
-- [x] Add enemies
-- [x] Add entity and wall collisions 
-- [x] Add loot dropping from enemies
-- [x] Add combat (automatic shooting at enemies)
-## Optional
-- [x] Maybe it's a good idea to use glm or other already existing library to handle 2d vectors
-- [ ] Tidy up the makelists.txt and the directory/file structure
-- [ ] Add UI with ImGUI
+## The general vision
+The details are in **GDD.md**. This hasn't been modified for some time, and it still contains some legacy ideas. It was used for brainstorming so far, but now it will need some more care and attention. This section will update, once the GDD is mostly ready.
 
-# Credits to resources are listed in
+## TODO
+All of the requirements to call it ready for presentation at my university have been achieved. Now I will use the Issue tab to track and plan next changes to the project. It will require a lot more work and polishing, but the vision is here.
+
+## Credits to resources are listed in
 resources/sources.md
