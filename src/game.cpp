@@ -7,6 +7,7 @@
 #include "utils/rng.hpp"
 #include "floor.hpp"
 #include "wall.hpp"
+#include "settings.hpp"
 
 Game::Game() : m_Player(new Player(2, 1)) {
     SDL_SetAppMetadata("ArcadeGameProject", "0.1", "ArcadeGameProject");
@@ -43,6 +44,16 @@ Game::Game() : m_Player(new Player(2, 1)) {
     }
 
     SDL_GL_SetSwapInterval(1);  // VSync = 1, uncapped = 0, adaprive VSync = -1 (if supported)
+
+    GLCall(glViewport(0, 0, 800, 600));
+
+    GLCall(glEnable(GL_BLEND));
+    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+    // Background color
+    GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
+
+    m_Renderer = new Renderer();
 
     // TODO - move thing below together with meshes to a separate place, prefereably something like hash_map
     /* Data for player VBO */
@@ -89,30 +100,36 @@ Game::~Game() {
     delete m_RenderMeshes["dungeon_autotile"];
     delete m_Player;
     delete m_Map;
+    delete m_Renderer;
     SDL_GL_DestroyContext(m_glContext);
 }
 
-void Game::Draw(Renderer* renderer) {
+void Game::Draw() {
+    m_Renderer->Clear();
+
     // Floors and Walls
-    m_Map->DisplayFloorAndWall(*m_Player, *renderer);
+    m_Map->DisplayFloorAndWall(*m_Player, *m_Renderer);
     // Loot
     for (const Loot& _loot : m_Loot) {
-        _loot.Display(*renderer, m_Player->GetViewMatrix());
+        _loot.Display(*m_Renderer, m_Player->GetViewMatrix());
     }
     // Enemies
     for (const Enemy& _enemy : m_Enemies) {
-        _enemy.Display(*renderer, m_Player->GetViewMatrix());
+        _enemy.Display(*m_Renderer, m_Player->GetViewMatrix());
     }
     // Player
-    m_Player->Display(*renderer, m_Player->GetViewMatrix());
+    m_Player->Display(*m_Renderer, m_Player->GetViewMatrix());
     // Projectiles
     for (const Projectile& _projectile : m_Projectiles) {
-        _projectile.Display(*renderer, m_Player->GetViewMatrix());
+        _projectile.Display(*m_Renderer, m_Player->GetViewMatrix());
     }
 }
 
-void Game::Simulate(float deltaTime) {
+void Game::Simulate() {
     if (m_Player->IsAlive() && !m_Enemies.empty()) {
+        m_MovementInput.UpdateMovement();
+        SetPlayerInput();
+
         // Enemies
         for (const Enemy& _enemy : m_Enemies) {
             if (!_enemy.IsAlive() && RNG::GetRNG().GetNextInt(0, 10) <= 4) {
@@ -125,16 +142,16 @@ void Game::Simulate(float deltaTime) {
             return !_enemy.IsAlive();
         });
         for (Enemy& _enemy : m_Enemies) {
-            _enemy.Simulate(deltaTime, m_Map->GetMapData(), *m_Player);
+            _enemy.Simulate(m_DeltaTime, m_Map->GetMapData(), *m_Player);
             if (_enemy.Overlaps(*m_Player)) {
-                m_Player->DamagePlayer(deltaTime, _enemy.GetContactDamagePerSecond());
+                m_Player->DamagePlayer(m_DeltaTime, _enemy.GetContactDamagePerSecond());
             }
         }
         // Player
         if (m_Map->ShouldPlayerRelocate()) {
             m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
         }
-        m_Player->Simulate(deltaTime, m_Map->GetMapData());
+        m_Player->Simulate(m_DeltaTime, m_Map->GetMapData());
         // Loot
         std::erase_if(m_Loot, [&](Loot& _loot) {
             if (_loot.Overlaps(*m_Player)) {
@@ -172,7 +189,7 @@ void Game::Simulate(float deltaTime) {
             m_Player->ResetFireReadiness();
         }
         for (Projectile& _projectile : m_Projectiles) {
-            _projectile.Simulate(deltaTime, m_Map->GetMapData());
+            _projectile.Simulate(m_DeltaTime, m_Map->GetMapData());
         }
         for (Projectile& _projectile : m_Projectiles) {
             for (Enemy& _enemy : m_Enemies) {
@@ -201,6 +218,58 @@ void Game::Simulate(float deltaTime) {
     }
 }
 
+SDL_AppResult Game::HandleEvent(SDL_Event* event) {
+    switch (event->type) {
+    case SDL_EVENT_QUIT:
+        return SDL_APP_SUCCESS;
+        break;
+    case SDL_EVENT_WINDOW_RESIZED:
+        GLCall(glViewport(0, 0, event->window.data1, event->window.data2));
+        break;
+    case SDL_EVENT_KEY_DOWN:
+        switch (event->key.key) {
+        case SDLK_W:
+            m_MovementInput.up = true;
+            break;
+        case SDLK_A:
+            m_MovementInput.left = true;
+            break;
+        case SDLK_S:
+            m_MovementInput.down = true;
+            break;
+        case SDLK_D:
+            m_MovementInput.right = true;
+            break;
+        case SDLK_PAGEUP:
+            Settings::GetSettings().ZoomOut();
+            break;
+        case SDLK_PAGEDOWN:
+            Settings::GetSettings().ZoomIn();
+            break;
+        }
+        break;
+    case SDL_EVENT_KEY_UP:
+        switch (event->key.key) {
+        case SDLK_W:
+            m_MovementInput.up = false;
+            break;
+        case SDLK_A:
+            m_MovementInput.left = false;
+            break;
+        case SDLK_S:
+            m_MovementInput.down = false;
+            break;
+        case SDLK_D:
+            m_MovementInput.right = false;
+            break;
+        }
+        break;
+    }
+    // For now I don't see a reason to handle the default.
+    // I only want to handle specific events. Not all of them.
+    return SDL_APP_CONTINUE;
+}
+
 void Game::PopulateMapWithEnemies() {
     m_Enemies.clear();
     m_Enemies = m_Map->PopulateMapWithEnemies(0.2, m_RenderMeshes.at("characters"));
@@ -215,9 +284,19 @@ void Game::SwapWindow() const {
     SDL_GL_SwapWindow(m_Window);
 }
 
-void Game::SetWindowTitle(unsigned int fps) const {
+void Game::FinishFrameTracking() {
+    m_FPS++;
+    m_DeltaTime = (SDL_GetTicks() - m_DeltaTimeMeasureStart) / 1000.0f;
+    if (m_DeltaTimeMeasureStart > m_DeltaTimeMeasurePrevious + 1000) {
+        m_DeltaTimeMeasurePrevious = m_DeltaTimeMeasureStart;
+        SetWindowTitle();
+        m_FPS = 0;
+    }
+}
+
+void Game::SetWindowTitle() const {
     std::stringstream title;
-    title << "FPS: " << fps << " Player health: " << m_Player->GetHealth() << "%";
+    title << "FPS: " << m_FPS << " Player health: " << m_Player->GetHealth() << "%";
     SDL_SetWindowTitle(m_Window, title.str().c_str());
 }
 
