@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 project(ArcadeGameProject)
 
-set(CMAKE_CXX_STANDARD 20)
-
 # Path to shader directory
 set(SHADER_DIR ${CMAKE_SOURCE_DIR}/shaders/)
 # List of all shaders present there
@@ -116,6 +114,7 @@ add_executable(ArcadeGameProject
     src/renderer/transform2d.hpp
     src/renderer/transform2d.cpp
 )
+target_compile_features(ArcadeGameProject PRIVATE cxx_std_20)
 
 # Link against SDL3
 #target_link_libraries(ArcadeGameProject PRIVATE SDL3::SDL3-static)
