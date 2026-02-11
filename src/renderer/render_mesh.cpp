@@ -13,7 +13,7 @@ RenderMesh::RenderMesh(const float* vertices, unsigned int verticesCount, const 
     layout.Push<float>(3);
     layout.Push<float>(2);
     m_VAO->AddBuffer(*m_VBO, layout);
-    m_Shader = new Shader("shaders/basic.glsl");
+    m_Shader = new Shader("shaders/basic_vertex.glsl", "shaders/basic_fragment.glsl");
     m_Shader->Bind();
     std::string basePath = SDL_GetBasePath();
     std::string actualTexPath = basePath + texturePath;

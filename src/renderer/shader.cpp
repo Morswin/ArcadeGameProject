@@ -6,11 +6,10 @@
 #include <glad/glad.h>
 #include "renderer_utils.hpp"
 
-Shader::Shader(const std::string& filepath)
-    : m_FilePath(filepath), m_RendererID(0)
+Shader::Shader(const std::string& vertexFilePath, const std::string& fragmentFilePath)
+    : m_RendererID(0)
 {
-    ShaderProgramSource source = ParseShader(filepath);
-    m_RendererID = CreateShader(source.vertexSourceProgram, source.fragmentSourceProgram);
+    m_RendererID = CreateShader(vertexFilePath, fragmentFilePath);
 }
 
 Shader::~Shader() {
@@ -47,28 +46,6 @@ void Shader::UpdateUV() {
     SetUniform1fv2("u_UVOffset", glm::vec2(uvScale.x * m_SpriteX, uvScale.y * m_SpriteY));
 }
 
-ShaderProgramSource Shader::ParseShader(const std::string& filepath) {
-    std::ifstream stream(filepath);
-    enum class ShaderType { NONE=-1, VERTEX=0, FRAGMENT=1 };
-    std::string line;
-    std::stringstream ss[2];
-    ShaderType type = ShaderType::NONE;
-    while ( getline(stream, line) ) {
-        if (line.find("#shader") != std::string::npos) {
-            if (line.find("vertex") != std::string::npos) {
-                type = ShaderType::VERTEX;
-            }
-            else if (line.find("fragment") != std::string::npos) {
-                type = ShaderType::FRAGMENT;
-            }
-        }
-        else {
-            ss[(int)type] << line << "\n";
-        }
-    }
-    return { ss[0].str(), ss[1].str() };
-}
-
 unsigned int Shader::CompileShader(unsigned int type, const std::string& source) {
     GLCall(unsigned int id = glCreateShader(type));
     const char* src = source.c_str();
@@ -87,8 +64,28 @@ unsigned int Shader::CompileShader(unsigned int type, const std::string& source)
     return id;
 }
 
-unsigned int Shader::CreateShader(const std::string& vertexShader, const std::string fragmentShader)
+unsigned int Shader::CreateShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 {
+    std::string vertexShader;
+    {
+        std::ifstream fs(vertexShaderPath);
+        std::string line;
+        std::stringstream ss;
+        while ( getline(fs, line) ) {
+            ss << line << "\n";
+        }
+        vertexShader = ss.str();
+    }
+    std::string fragmentShader;
+    {
+        std::ifstream fs(fragmentShaderPath);
+        std::string line;
+        std::stringstream ss;
+        while ( getline(fs, line) ) {
+            ss << line << "\n";
+        }
+        fragmentShader = ss.str();
+    }
     GLCall(unsigned int program = glCreateProgram());
     unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
     unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);

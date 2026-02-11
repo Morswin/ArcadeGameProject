@@ -13,7 +13,6 @@ struct ShaderProgramSource {
 
 class Shader {
 private:
-    std::string m_FilePath;
     unsigned int m_RendererID;
     std::unordered_map<std::string, int> m_UniformLocationCache;
     int m_SpriteX{0};
@@ -21,7 +20,7 @@ private:
     int m_SpriteColumns{1};
     int m_SpriteRows{1};
 public:
-    Shader(const std::string& filepath);
+    Shader(const std::string& vertexFilePath, const std::string& fragmentFilePath);
     ~Shader();
 
     void Bind() const;
@@ -37,10 +36,9 @@ public:
     inline void SetSpriteSize(int columns, int rows) { m_SpriteColumns = columns; m_SpriteRows = rows; }
     inline void SetSpriteCoordinate(int x, int y) { m_SpriteX = x; m_SpriteY = y; }
 private:
+    unsigned int CreateShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
     bool CompileShader();
-    unsigned int CreateShader(const std::string& vertexShader, const std::string fragmentShader);
     unsigned int CompileShader(unsigned int type, const std::string& source);
-    ShaderProgramSource ParseShader(const std::string& filepath);
     int GetUniformLocation(const std::string name);
 };
 
