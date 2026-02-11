@@ -1,10 +1,25 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 4.2)
 project(ArcadeGameProject)
 
-# Path to shader directory
-set(SHADER_DIR ${CMAKE_SOURCE_DIR}/shaders/)
-# List of all shaders present there
-file(GLOB SHADERS ${SHADER_DIR}/*)
+# Enables FetchContent
+include(FetchContent)
+
+# This line below tells SDL3 to expose those SDL hook methods and to handle the main() function.
+# From what I know, this helps in case I want to make the project cross-compile which I intend for at least both Linux and Windows platforms.
+set(SDL_MAIN_USE_CALLBACKS 1)
+
+set(SHADER_DIR ${CMAKE_SOURCE_DIR}/shaders/)  # Path to shader directory
+file(GLOB SHADERS ${SHADER_DIR}/*)  # List of all shaders present there
+set(RESOURCE_DIR ${CMAKE_SOURCE_DIR}/resources/)
+file(GLOB RESOURCES ${RESOURCE_DIR}/*)  # List of resources such as sprites
+
+file(GLOB MAIN_HEADERS ${CMAKE_SOURCE_DIR}/src/*.hpp)
+file(GLOB MAIN_SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
+file(GLOB UTILITY_HEADERS ${CMAKE_SOURCE_DIR}/src/utils/*.hpp)
+file(GLOB UTILITY_SOURCES ${CMAKE_SOURCE_DIR}/src/utils/*.cpp)
+file(GLOB RENDERER_HEADERS ${CMAKE_SOURCE_DIR}/src/renderer/*.hpp)
+file(GLOB RENDERER_SOURCES ${CMAKE_SOURCE_DIR}/src/renderer/*.cpp)
+
 # Subdirectory for shaders in build directory
 set(SHADER_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/shaders)
 # Command for copying shaders
@@ -14,17 +29,12 @@ add_custom_target(copy_shaders ALL
     COMMENT "Copying shader files to shader subdirectory in build directory."
 )
 
-set(RESOURCE_DIR ${CMAKE_SOURCE_DIR}/resources/)
-file(GLOB RESOURCES ${RESOURCE_DIR}/*)
 set(RESOURCE_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/resources)
 add_custom_target(copy_resources ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${RESOURCE_DIR} ${RESOURCE_OUTPUT_DIR}
     COMMENT "Copying resource files to resource subdirectory in build directory."
 )
-
-# Enables FetchContent
-include(FetchContent)
 
 # define a function for adding git dependencies
 function(include_dependency libName gitURL gitTag)
@@ -53,67 +63,18 @@ message(STATUS "Getting GLM from Github")
 include_dependency(glm https://github.com/g-truc/glm.git 1.0.1)
 
 add_executable(ArcadeGameProject
-    src/main.cpp
-
-    src/game.hpp
-    src/game.cpp
-    src/game_element.hpp
-    src/game_element.cpp
-    src/environment.hpp
-    src/environment.cpp
-    src/entity.hpp
-    src/entity.cpp
-    src/map.hpp
-    src/map.cpp
-    src/map_position.hpp
-    src/player.hpp
-    src/player.cpp
-    src/settings.hpp
-    src/settings.cpp
-    src/wall.hpp
-    src/wall.cpp
-    src/floor.hpp
-    src/floor.cpp
-    src/enemy.hpp
-    src/enemy.cpp
-    src/room.hpp
-    src/room.cpp
-    src/collision.hpp
-    src/collision.cpp
-    src/projectile.hpp
-    src/projectile.cpp
-    src/loot.hpp
-    src/loot.cpp
-
-    src/utils/rng.hpp
-    src/utils/rng.cpp
-    src/utils/sdl_error.hpp
+    ${MAIN_HEADERS}
+    ${MAIN_SOURCES}
+    ${UTILITY_HEADERS}
+    ${UTILITY_SOURCES}
+    ${RENDERER_HEADERS}
+    ${RENDERER_SOURCES}
 
     src/third_party/glad/glad.c
     src/third_party/stb/stb_image.h
     src/third_party/stb/stb_image.cpp
-
-    src/renderer/element_buffer.hpp
-    src/renderer/element_buffer.cpp
-    src/renderer/render_mesh.hpp
-    src/renderer/render_mesh.cpp
-    src/renderer/renderer.hpp
-    src/renderer/renderer.cpp
-    src/renderer/vertex_buffer.hpp
-    src/renderer/vertex_buffer.cpp
-    src/renderer/vertex_array.hpp
-    src/renderer/vertex_array.cpp
-    src/renderer/vertex_buffer_layout.hpp
-    src/renderer/vertex_buffer_layout.cpp
-    src/renderer/shader.hpp
-    src/renderer/shader.cpp
-    src/renderer/renderer_utils.hpp
-    src/renderer/renderer_utils.cpp
-    src/renderer/texture.hpp
-    src/renderer/texture.cpp
-    src/renderer/transform2d.hpp
-    src/renderer/transform2d.cpp
 )
+# From now on this is where I set the C++ standard for this project
 target_compile_features(ArcadeGameProject PRIVATE cxx_std_20)
 
 # Link against SDL3
