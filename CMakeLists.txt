@@ -27,27 +27,26 @@ set(SHADER_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/shaders)
 # Command for copying shaders
 add_custom_target(copy_shaders ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${SHADER_DIR} ${SHADER_OUTPUT_DIR}
+    ${SHADER_DIR} ${SHADER_OUTPUT_DIR}
     COMMENT "Copying shader files to shader subdirectory in build directory."
-)
+    )
 
 set(RESOURCE_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/resources)
 add_custom_target(copy_resources ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${RESOURCE_DIR} ${RESOURCE_OUTPUT_DIR}
+    ${RESOURCE_DIR} ${RESOURCE_OUTPUT_DIR}
     COMMENT "Copying resource files to resource subdirectory in build directory."
-)
+    )
 
 # define a function for adding git dependencies
 function(include_dependency libName gitURL gitTag)
     # setup the declare
     FetchContent_Declare(${libName}
-            GIT_REPOSITORY ${gitURL}
-            GIT_TAG        ${gitTag}
-            GIT_SHALLOW    TRUE
-            GIT_PROGRESS   TRUE
-    )
-
+        GIT_REPOSITORY ${gitURL}
+        GIT_TAG        ${gitTag}
+        GIT_SHALLOW    TRUE
+        GIT_PROGRESS   TRUE
+        )
     FetchContent_MakeAvailable(${libName})
 endfunction()
 
@@ -57,6 +56,7 @@ include_dependency(SDL3 https://github.com/libsdl-org/SDL.git main)
 message(STATUS "Getting GLM from Github")
 include_dependency(glm https://github.com/g-truc/glm.git 1.0.1)
 
+# TODO - Split cmake file so each dependency gets its dedicated folder
 add_executable(ArcadeGameProject
     ${MAIN_HEADERS}
     ${MAIN_SOURCES}
@@ -64,11 +64,29 @@ add_executable(ArcadeGameProject
     ${UTILITY_SOURCES}
     ${RENDERER_HEADERS}
     ${RENDERER_SOURCES}
-
+    # Glad
     src/third_party/glad/glad.c
+    # Stb_image
     src/third_party/stb/stb_image.h
     src/third_party/stb/stb_image.cpp
-)
+    # ImGUI
+    src/third_party/imgui/imconfig.h
+    src/third_party/imgui/imgui.cpp
+    src/third_party/imgui/imgui.h
+    src/third_party/imgui/imgui_demo.cpp
+    src/third_party/imgui/imgui_draw.cpp
+    src/third_party/imgui/imgui_internal.h
+    src/third_party/imgui/imgui_tables.cpp
+    src/third_party/imgui/imgui_widgets.cpp
+    src/third_party/imgui/imstb_rectpack.h
+    src/third_party/imgui/imstb_textedit.h
+    src/third_party/imgui/imstb_truetype.h
+    src/third_party/imgui/imgui_impl_sdl3.cpp
+    src/third_party/imgui/imgui_impl_sdl3.h
+    src/third_party/imgui/imgui_impl_opengl3.cpp
+    src/third_party/imgui/imgui_impl_opengl3.h
+    src/third_party/imgui/imgui_impl_opengl3_loader.h
+    )
 # From now on this is where I set the C++ standard for this project
 target_compile_features(ArcadeGameProject PRIVATE cxx_std_20)
 
@@ -88,8 +106,8 @@ add_dependencies(ArcadeGameProject copy_resources)
 
 if (WIN32)
     add_custom_command(
-            TARGET ArcadeGameProject POST_BUILD
-            COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL3::SDL3>" "$<TARGET_FILE_DIR:ArcadeGameProject>"
-            VERBATIM
-    )
+        TARGET ArcadeGameProject POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL3::SDL3>" "$<TARGET_FILE_DIR:ArcadeGameProject>"
+        VERBATIM
+        )
 endif()

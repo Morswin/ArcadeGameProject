@@ -12,6 +12,9 @@
 #include "enemy.hpp"
 #include "projectile.hpp"
 #include "loot.hpp"
+#include "third_party/imgui/imgui.h"
+#include "third_party/imgui/imgui_impl_sdl3.h"
+#include "third_party/imgui/imgui_impl_opengl3.h"
 
 struct MovementInput {
     bool right, left, up, down;

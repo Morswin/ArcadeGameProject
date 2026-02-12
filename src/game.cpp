@@ -91,9 +91,22 @@ Game::Game() : m_Player(new Player(2, 1)) {
     }
 
     PopulateMapWithEnemies();
+
+    // Test - setting up ImGui
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& imgui_io = ImGui::GetIO();
+    imgui_io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    imgui_io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    ImGui_ImplSDL3_InitForOpenGL(m_Window, m_glContext);
+    ImGui_ImplOpenGL3_Init();
 }
 
 Game::~Game() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
+    ImGui::DestroyContext();
+
     delete m_RenderMeshes["food"];
     delete m_RenderMeshes["characters"];
     delete m_RenderMeshes["dungeon"];
@@ -123,9 +136,19 @@ void Game::Draw() {
     for (const Projectile& _projectile : m_Projectiles) {
         _projectile.Display(*m_Renderer, m_Player->GetViewMatrix());
     }
+
+    // Displaying ImGui
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void Game::Simulate() {
+    // Imgui Test
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
+    ImGui::ShowDemoWindow();
+
     if (m_Player->IsAlive() && !m_Enemies.empty()) {
         m_MovementInput.UpdateMovement();
         SetPlayerInput();
@@ -219,6 +242,10 @@ void Game::Simulate() {
 }
 
 SDL_AppResult Game::HandleEvent(SDL_Event* event) {
+    // Let ImGui process events
+    ImGui_ImplSDL3_ProcessEvent(event);
+
+    // My event handling
     switch (event->type) {
     case SDL_EVENT_QUIT:
         return SDL_APP_SUCCESS;
