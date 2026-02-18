@@ -9,17 +9,17 @@ class UIManager
 private:
     std::vector<UIWindow*> m_Windows{};
     int m_LastKnownFPS{0};
-    float m_PlayerHelth{0.0f};
+    float m_PlayerHealth{0.0f};
 public:
-    UIManager();
+    UIManager() = default;
     ~UIManager() noexcept;
 
-    void UseWindows();
+    void UseWindows() const;
 
     void RegisterNewWindow(UIWindow* window) { m_Windows.push_back(window); }
 
-    inline void UpdateLastKnownFPS(int fps) { m_LastKnownFPS = fps; }
-    inline void UpdatePlayerHealth(float health) { m_PlayerHelth = health; }
+    inline void UpdateLastKnownFPS(const int fps) { m_LastKnownFPS = fps; }
+    inline void UpdatePlayerHealth(const float health) { m_PlayerHealth = health; }
 };
 
 #endif  // UI_MANAGER_HPP

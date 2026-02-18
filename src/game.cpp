@@ -11,6 +11,9 @@
 #include "ui/ui_debug_fps_display.hpp"
 #include "ui/ui_player_statistics.hpp"
 #include "ui/ui_manager.hpp"
+#include "third_party/imgui/imgui.h"
+#include "third_party/imgui/imgui_impl_sdl3.h"
+#include "third_party/imgui/imgui_impl_opengl3.h"
 
 Game::Game() : m_Player(new Player(2, 1))
 {
@@ -45,13 +48,13 @@ Game::Game() : m_Player(new Player(2, 1))
         throw sdl_error(ss.str());
     }
 
-    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
+    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress)))
     {
         SDL_Quit();
         throw sdl_error("Failed initialize GLAD");
     }
 
-    SDL_GL_SetSwapInterval(1);  // VSync = 1, uncapped = 0, adaprive VSync = -1 (if supported)
+    SDL_GL_SetSwapInterval(1);  // VSync = 1, uncapped = 0, adaptive VSync = -1 (if supported)
 
     GLCall(glViewport(0, 0, 800, 600));
 
@@ -63,7 +66,7 @@ Game::Game() : m_Player(new Player(2, 1))
 
     m_Renderer = new Renderer();
 
-    // TODO - move thing below together with meshes to a separate place, prefereably something like hash_map
+    // TODO - move thing below together with meshes to a separate place, preferably something like hash_map
     /* Data for player VBO */
     float vertices[] = {
          0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
@@ -110,8 +113,19 @@ Game::Game() : m_Player(new Player(2, 1))
     ImGui_ImplSDL3_InitForOpenGL(m_Window, m_glContext);
     ImGui_ImplOpenGL3_Init();
 
-    m_UIManager.RegisterNewWindow(new UIDebugFPSDisplay("Debug FPS"));
-    m_UIManager.RegisterNewWindow(new UIPlayerStatistics("Player Statistics"));
+    auto* debug_fps_display = new UIDebugFPSDisplay();
+    debug_fps_display->AddFlag(ImGuiWindowFlags_NoTitleBar);
+    debug_fps_display->AddFlag(ImGuiWindowFlags_NoBackground);
+    debug_fps_display->AddFlag(ImGuiWindowFlags_NoResize);
+    debug_fps_display->AddFlag(ImGuiWindowFlags_NoDocking);
+    debug_fps_display->AddFlag(ImGuiWindowFlags_NoMove);
+    m_UIManager.RegisterNewWindow(debug_fps_display);
+    auto* player_statistics = new UIPlayerStatistics();
+    player_statistics->AddFlag(ImGuiWindowFlags_NoTitleBar);
+    player_statistics->AddFlag(ImGuiWindowFlags_NoBackground);
+    player_statistics->AddFlag(ImGuiWindowFlags_NoResize);
+    player_statistics->AddFlag(ImGuiWindowFlags_NoMove);
+    m_UIManager.RegisterNewWindow(player_statistics);
 }
 
 Game::~Game()
@@ -270,7 +284,7 @@ void Game::Simulate()
     else
     {
         // This is a good place to show some Game Over UI, once it's'
-        // Or something regarding wenturing to the next level if all enemies have been killed
+        // Or something regarding venturing to the next level if all enemies have been killed
         m_Loot.clear();
         m_Projectiles.clear();
         m_Map->GenerateNewMap();
@@ -290,7 +304,6 @@ SDL_AppResult Game::HandleEvent(SDL_Event* event)
     {
     case SDL_EVENT_QUIT:
         return SDL_APP_SUCCESS;
-        break;
     case SDL_EVENT_WINDOW_RESIZED:
         GLCall(glViewport(0, 0, event->window.data1, event->window.data2));
         break;

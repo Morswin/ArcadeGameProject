@@ -1,11 +1,9 @@
 #include "ui_player_statistics.hpp"
 
 #include "../third_party/imgui/imgui.h"
-#include "../third_party/imgui/imgui_impl_sdl3.h"
-#include "../third_party/imgui/imgui_impl_opengl3.h"
 
-UIPlayerStatistics::UIPlayerStatistics(std::string name)
-    : UIWindow(name)
+UIPlayerStatistics::UIPlayerStatistics()
+    : UIWindow()
 {
 }
 
@@ -20,7 +18,8 @@ void UIPlayerStatistics::operator()()
 
 void UIPlayerStatistics::operator()(float player_health, bool provided)
 {
-    if (provided && ImGui::Begin(m_WindowName.c_str(), &m_WindowOpen, m_WindowFlags))
+    if (provided) ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
+    if (provided && ImGui::Begin("Player Statistics", &m_WindowOpen, m_WindowFlags))
     {
         ImGui::Text("HP: ");
         ImGui::SameLine();
