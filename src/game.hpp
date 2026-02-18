@@ -15,36 +15,45 @@
 #include "third_party/imgui/imgui.h"
 #include "third_party/imgui/imgui_impl_sdl3.h"
 #include "third_party/imgui/imgui_impl_opengl3.h"
+#include "ui/ui_manager.hpp"
 
-struct MovementInput {
+struct MovementInput
+{
     bool right, left, up, down;
     glm::vec2 movement;
 
     MovementInput() : right(false), left(false), up(false), down(false), movement(glm::vec2{0.0f, 0.0f}) {}
 
-    void UpdateMovement() {
+    void UpdateMovement()
+    {
         float x = 0.0f;
         float y = 0.0f;
 
-        if (right && !left) {
+        if (right && !left)
+        {
             x = 1.0f;
         }
-        else if (!right && left) {
+        else if (!right && left)
+        {
             x = -1.0f;
         }
 
-        if (up && !down) {
+        if (up && !down)
+        {
             y = 1.0f;
         }
-        else if (!up && down) {
+        else if (!up && down)
+        {
             y = -1.0f;
         }
 
         // I believe that this if statement should fix the issue with accidentally making a vec2 of Nan values. Mostlikely it was a way not to divide by zero, but I am not sure. After all, there is no need for notmalizing a vector of 0.0f length, right?
-        if (!(x == 0.0f && y ==0.0f)) {
+        if (!(x == 0.0f && y ==0.0f))
+        {
             movement = glm::normalize(glm::vec2{x, y});
         }
-        else {
+        else
+        {
             movement = glm::vec2{x, y};
         }
     }
@@ -67,6 +76,7 @@ private:
     unsigned int m_DeltaTimeMeasurePrevious{0};
     unsigned int m_FPS{0};
     float m_DeltaTime{0.0f};
+    UIManager m_UIManager;
 public:
     Game();
     ~Game();
@@ -74,8 +84,6 @@ public:
     void Draw();
     void Simulate();
     SDL_AppResult HandleEvent(SDL_Event* event);
-    void SwapWindow() const;
-    void SetWindowTitle() const;
     void FinishFrameTracking();
 
     inline void SetPlayerInput() { m_Player->SetMovementInputForce(m_MovementInput.movement); }

@@ -27,7 +27,6 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     game->StartFrameTracking();
     game->Simulate();
     game->Draw();
-    game->SwapWindow();
     game->FinishFrameTracking();
     return SDL_APP_CONTINUE;
 }

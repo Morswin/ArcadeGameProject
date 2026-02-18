@@ -21,6 +21,8 @@ file(GLOB UTILITY_HEADERS ${CMAKE_SOURCE_DIR}/src/utils/*.hpp)
 file(GLOB UTILITY_SOURCES ${CMAKE_SOURCE_DIR}/src/utils/*.cpp)
 file(GLOB RENDERER_HEADERS ${CMAKE_SOURCE_DIR}/src/renderer/*.hpp)
 file(GLOB RENDERER_SOURCES ${CMAKE_SOURCE_DIR}/src/renderer/*.cpp)
+file(GLOB UI_HEADERS ${CMAKE_SOURCE_DIR}/src/ui/*.hpp)
+file(GLOB UI_SOURCES ${CMAKE_SOURCE_DIR}/src/ui/*.cpp)
 
 # Subdirectory for shaders in build directory
 set(SHADER_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/shaders)
@@ -64,6 +66,8 @@ add_executable(ArcadeGameProject
     ${UTILITY_SOURCES}
     ${RENDERER_HEADERS}
     ${RENDERER_SOURCES}
+    ${UI_HEADERS}
+    ${UI_SOURCES}
     # Glad
     src/third_party/glad/glad.c
     # Stb_image
