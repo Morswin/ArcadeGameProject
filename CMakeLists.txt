@@ -7,8 +7,10 @@ include(FetchContent)
 # This line below tells SDL3 to expose those SDL hook methods and to handle the main() function.
 # From what I know, this helps in case I want to make the project cross-compile which I intend for at least both Linux and Windows platforms.
 set(SDL_MAIN_USE_CALLBACKS 1)
-set(SDL_SHARED FALSE)
-set(SDL_STATIC TRUE)
+set(SDL_SHARED ON)
+set(SDL_STATIC OFF)
+set(SDL_TEST_LIBRARY OFF)
+set(SDL_TESTS OFF)
 
 set(SHADER_DIR ${CMAKE_SOURCE_DIR}/shaders/)  # Path to shader directory
 file(GLOB SHADERS ${SHADER_DIR}/*)  # List of all shaders present there
