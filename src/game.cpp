@@ -18,7 +18,7 @@
 
 Game::Game() : m_Player(new Player(2, 1))
 {
-    SDL_SetAppMetadata("ArcadeGameProject", "0.1", "ArcadeGameProject");
+    SDL_SetAppMetadata("ArcadeGameProject", "1.0", "ArcadeGameProject");
 
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
