@@ -1,8 +1,9 @@
-#ifndef ENEMY_H
-#define ENEMY_H
+#ifndef ENEMY_HPP
+#define ENEMY_HPP
 
 #include "entity.hpp"
 #include "player.hpp"
+#include "enemy_prefabricate.hpp"
 
 class Enemy : public Entity
 {
@@ -15,8 +16,8 @@ private:
     double m_ContactDamagePerSecond{20.0};
     int m_EnemyHealth{30};
 public:
-    Enemy(int spriteColumn, int spriteRow);
-    ~Enemy() noexcept;
+    explicit Enemy(EnemyPrefabricate prefabricate);
+    ~Enemy() noexcept override = default;
 
     void Simulate(float deltaTime, const std::map<MapPosition, unsigned int>& mapData, const Player& player);
     void WanderAround(float deltaTime);
@@ -29,4 +30,4 @@ public:
     inline double GetContactDamagePerSecond() const { return m_ContactDamagePerSecond; }
 };
 
-#endif //ENEMY_H
+#endif //ENEMY_HPP

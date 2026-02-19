@@ -5,13 +5,15 @@
 #include <glm/glm.hpp>
 #include "utils/rng.hpp"
 
-Enemy::Enemy(int spriteColumn, int spriteRow)
-    : GameElement(spriteColumn, spriteRow), Entity(spriteColumn, spriteRow)
+Enemy::Enemy(EnemyPrefabricate prefabricate)
+    : GameElement(prefabricate.GetSpriteColumn(), prefabricate.GetSpriteRow()),
+    Entity(prefabricate.GetSpriteColumn(), prefabricate.GetSpriteRow()),
+    m_DetectionRange(prefabricate.GetDetectionRange()), m_WanderSpeed(prefabricate.GetWanderSpeed()),
+    m_ChaseSpeed(prefabricate.GetChaseSpeed()), m_ContactDamagePerSecond(prefabricate.GetContactDamagePerSecond()),
+    m_EnemyHealth(prefabricate.GetEnemyHealth())
 {
+    SetMesh(prefabricate.GetRenderMesh());
     m_Transform.SetScale(glm::vec2(0.9f));
-}
-
-Enemy::~Enemy() noexcept {
 }
 
 void Enemy::Simulate(float deltaTime , const std::map<MapPosition, unsigned int>& mapData, const Player& player) {

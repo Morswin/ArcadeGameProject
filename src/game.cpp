@@ -5,15 +5,16 @@
 #include <glad/glad.h>
 #include "utils/sdl_error.hpp"
 #include "utils/rng.hpp"
-#include "floor.hpp"
-#include "wall.hpp"
-#include "settings.hpp"
 #include "ui/ui_debug_fps_display.hpp"
 #include "ui/ui_player_statistics.hpp"
 #include "ui/ui_manager.hpp"
 #include "third_party/imgui/imgui.h"
 #include "third_party/imgui/imgui_impl_sdl3.h"
 #include "third_party/imgui/imgui_impl_opengl3.h"
+#include "floor.hpp"
+#include "wall.hpp"
+#include "settings.hpp"
+#include "enemy_prefabricate.hpp"
 
 Game::Game() : m_Player(new Player(2, 1))
 {
@@ -102,7 +103,25 @@ Game::Game() : m_Player(new Player(2, 1))
         m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
     }
 
-    PopulateMapWithEnemies();
+    // The default one
+    EnemyPrefabricate enemy_skeleton(
+        3.0, 0.25f, 0.6f, 20.0, 30,
+        m_RenderMeshes.at("characters"), 0, 0
+        );
+    m_EnemyManager.RegisterEnemyPrefabricate(enemy_skeleton);
+    // The slower, more dangerous
+    EnemyPrefabricate enemy_zombie(
+        2.0, 0.15f, 0.4f, 35.0, 50,
+        m_RenderMeshes.at("characters"), 1, 0
+        );
+    m_EnemyManager.RegisterEnemyPrefabricate(enemy_zombie);
+    // The faster, but weaker
+    EnemyPrefabricate enemy_bat(
+        4.5, 0.45f, 0.85f, 10.0, 15,
+        m_RenderMeshes.at("characters"), 3, 0
+        );
+    m_EnemyManager.RegisterEnemyPrefabricate(enemy_bat);
+    m_EnemyManager.PopulateMapWithEnemies(m_Map, m_Player, m_RenderMeshes.at("characters"));
 
     // Setting up ImGui
     IMGUI_CHECKVERSION();
@@ -113,19 +132,21 @@ Game::Game() : m_Player(new Player(2, 1))
     ImGui_ImplSDL3_InitForOpenGL(m_Window, m_glContext);
     ImGui_ImplOpenGL3_Init();
 
+    auto* player_statistics = new UIPlayerStatistics();
+    player_statistics->AddFlag(ImGuiWindowFlags_NoTitleBar);
+    player_statistics->AddFlag(ImGuiWindowFlags_NoBackground);
+    player_statistics->AddFlag(ImGuiWindowFlags_NoResize);
+    player_statistics->AddFlag(ImGuiWindowFlags_NoMove);
+    player_statistics->AddFlag(ImGuiWindowFlags_AlwaysAutoResize);
+    m_UIManager.RegisterNewWindow(player_statistics);
     auto* debug_fps_display = new UIDebugFPSDisplay();
     debug_fps_display->AddFlag(ImGuiWindowFlags_NoTitleBar);
     debug_fps_display->AddFlag(ImGuiWindowFlags_NoBackground);
     debug_fps_display->AddFlag(ImGuiWindowFlags_NoResize);
     debug_fps_display->AddFlag(ImGuiWindowFlags_NoDocking);
     debug_fps_display->AddFlag(ImGuiWindowFlags_NoMove);
+    debug_fps_display->AddFlag(ImGuiWindowFlags_AlwaysAutoResize);
     m_UIManager.RegisterNewWindow(debug_fps_display);
-    auto* player_statistics = new UIPlayerStatistics();
-    player_statistics->AddFlag(ImGuiWindowFlags_NoTitleBar);
-    player_statistics->AddFlag(ImGuiWindowFlags_NoBackground);
-    player_statistics->AddFlag(ImGuiWindowFlags_NoResize);
-    player_statistics->AddFlag(ImGuiWindowFlags_NoMove);
-    m_UIManager.RegisterNewWindow(player_statistics);
 }
 
 Game::~Game()
@@ -145,7 +166,7 @@ Game::~Game()
     SDL_GL_DestroyContext(m_glContext);
 }
 
-void Game::Draw() {
+void Game::Draw() const {
     m_Renderer->Clear();
 
     // Floors and Walls
@@ -156,10 +177,7 @@ void Game::Draw() {
         _loot.Display(*m_Renderer, m_Player->GetViewMatrix());
     }
     // Enemies
-    for (const Enemy& _enemy : m_Enemies)
-    {
-        _enemy.Display(*m_Renderer, m_Player->GetViewMatrix());
-    }
+    m_EnemyManager.Draw(m_Renderer, m_Player);
     // Player
     m_Player->Display(*m_Renderer, m_Player->GetViewMatrix());
     // Projectiles
@@ -185,31 +203,13 @@ void Game::Simulate()
     m_UIManager.UpdatePlayerHealth(static_cast<float>(m_Player->GetHealth()));
     // Imgui end
 
-    if (m_Player->IsAlive() && !m_Enemies.empty()) {
+    if (m_Player->IsAlive() && !m_EnemyManager.IsEmpty()) {
         m_MovementInput.UpdateMovement();
         SetPlayerInput();
 
         // Enemies
-        for (const Enemy& _enemy : m_Enemies)
-        {
-            if (!_enemy.IsAlive() && RNG::GetRNG().GetNextInt(0, 10) <= 4) {
-                Loot _loot(m_RenderMeshes["food"]);
-                _loot.GetTransform().SetPosition(_enemy.GetTransform().GetPosition());
-                m_Loot.push_back(_loot);
-            }
-        }
-        std::erase_if(m_Enemies, [](const Enemy& _enemy)
-        {
-            return !_enemy.IsAlive();
-        });
-        for (Enemy& _enemy : m_Enemies)
-        {
-            _enemy.Simulate(m_DeltaTime, m_Map->GetMapData(), *m_Player);
-            if (_enemy.Overlaps(*m_Player))
-            {
-                m_Player->DamagePlayer(m_DeltaTime, _enemy.GetContactDamagePerSecond());
-            }
-        }
+        // Variable _loot_positions is used later in Loot section
+        std::vector<glm::vec2> _loot_positions = m_EnemyManager.Simulate(m_DeltaTime, m_Map->GetMapData(), m_Player);
         // Player
         if (m_Map->ShouldPlayerRelocate())
         {
@@ -217,7 +217,13 @@ void Game::Simulate()
         }
         m_Player->Simulate(m_DeltaTime, m_Map->GetMapData());
         // Loot
-        std::erase_if(m_Loot, [&](Loot& _loot)
+        for (const glm::vec2& _loot_position : _loot_positions)
+        {
+            Loot _loot(m_RenderMeshes["food"]);
+            _loot.GetTransform().SetPosition(_loot_position);
+            m_Loot.push_back(_loot);
+        }
+        std::erase_if(m_Loot, [&](const Loot& _loot)
         {
             if (_loot.Overlaps(*m_Player))
             {
@@ -228,7 +234,7 @@ void Game::Simulate()
         });
         // Here Loot can be simulated if such need would arise.
         // Projectiles
-        if (m_Player->IsReadyToFire() && !m_Enemies.empty() && IsEnemyInPlayerRange())
+        if (m_Player->IsReadyToFire() && !m_EnemyManager.IsEmpty() && m_EnemyManager.IsEnemyInPlayerRange(m_Player))
         {
             Projectile _projectile(0, 0);
             _projectile.SetMesh(m_RenderMeshes["projectile"]);
@@ -237,21 +243,21 @@ void Game::Simulate()
             const glm::vec2 projectilePos = _projectile.GetTransform().GetPosition();
             Enemy* closestEnemy = nullptr;
             float closestDistSq = std::numeric_limits<float>::max();
-            for (Enemy& enemy : m_Enemies)
+            for (Enemy& _enemy : m_EnemyManager.GetEnemies())
             {
-                const glm::vec2 enemyPos = enemy.GetTransform().GetPosition();
+                const glm::vec2 enemyPos = _enemy.GetTransform().GetPosition();
                 const glm::vec2 diff = enemyPos - projectilePos;
                 const float distSq = glm::dot(diff, diff);
                 if (distSq < closestDistSq)
                 {
                     closestDistSq = distSq;
-                    closestEnemy = &enemy;
+                    closestEnemy = &_enemy;
                 }
             }
             if (closestEnemy)
             {
                 glm::vec2 direction = glm::normalize(closestEnemy->GetTransform().GetPosition() - projectilePos);
-                const float projectileSpeed = 3.0f;
+                constexpr float projectileSpeed = 3.0f;
                 _projectile.SetVelocity(direction * projectileSpeed);
                 _projectile.AddForce(direction * (projectileSpeed * 0.1f));
             }
@@ -264,7 +270,7 @@ void Game::Simulate()
         }
         for (Projectile& _projectile : m_Projectiles)
         {
-            for (Enemy& _enemy : m_Enemies)
+            for (Enemy& _enemy : m_EnemyManager.GetEnemies())
             {
                 if (!_enemy.IsAlive()) continue;
                 if (_projectile.Overlaps(_enemy))
@@ -289,7 +295,7 @@ void Game::Simulate()
         m_Projectiles.clear();
         m_Map->GenerateNewMap();
         m_Player->GetTransform().SetPosition(m_Map->GetPlayerStartLocation());
-        PopulateMapWithEnemies();
+        m_EnemyManager.PopulateMapWithEnemies(m_Map, m_Player, m_RenderMeshes.at("characters"));
         m_Player->HealCompletely();
     }
 }
@@ -328,6 +334,8 @@ SDL_AppResult Game::HandleEvent(SDL_Event* event)
         case SDLK_PAGEDOWN:
             Settings::GetSettings().ZoomIn();
             break;
+        default:
+            return SDL_APP_CONTINUE;
         }
         break;
     case SDL_EVENT_KEY_UP:
@@ -345,24 +353,16 @@ SDL_AppResult Game::HandleEvent(SDL_Event* event)
         case SDLK_D:
             m_MovementInput.right = false;
             break;
+        default:
+            return SDL_APP_CONTINUE;
         }
         break;
+    default:
+        return SDL_APP_CONTINUE;
     }
     // For now I don't see a reason to handle the default.
     // I only want to handle specific events. Not all of them.
     return SDL_APP_CONTINUE;
-}
-
-void Game::PopulateMapWithEnemies()
-{
-    m_Enemies.clear();
-    m_Enemies = m_Map->PopulateMapWithEnemies(0.2, m_RenderMeshes.at("characters"));
-    std::erase_if(m_Enemies, [&](const Enemy& _enemy)
-    {
-        const float _difference = glm::distance(_enemy.GetTransform().GetPosition(), m_Player->GetTransform().GetPosition());
-        const double _erasureRange = _enemy.GetDetectionRange() * 1.5;
-        return _difference < _erasureRange;
-    });
 }
 
 void Game::FinishFrameTracking()
@@ -376,19 +376,3 @@ void Game::FinishFrameTracking()
         m_FPS = 0;
     }
 }
-
-bool Game::IsEnemyInPlayerRange()
-{
-    const float _rangeSq = std::pow(m_Player->GetRange(), 2);
-    for (const Enemy& _enemy : m_Enemies)
-    {
-        if (!_enemy.IsAlive()) continue;
-        const glm::vec2 _delta = _enemy.GetTransform().GetPosition() - m_Player->GetTransform().GetPosition();
-        if (glm::dot(_delta, _delta) <= _rangeSq)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-

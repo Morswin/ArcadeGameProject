@@ -7,12 +7,13 @@
 #include <SDL3/SDL.h>
 #include "renderer/renderer.hpp"
 #include "renderer/render_mesh.hpp"
+#include "ui/ui_manager.hpp"
 #include "player.hpp"
 #include "map.hpp"
 #include "enemy.hpp"
 #include "projectile.hpp"
 #include "loot.hpp"
-#include "ui/ui_manager.hpp"
+#include "enemy_manager.hpp"
 
 struct MovementInput
 {
@@ -44,7 +45,9 @@ struct MovementInput
             y = -1.0f;
         }
 
-        // I believe that this if statement should fix the issue with accidentally making a vec2 of Nan values. Mostlikely it was a way not to divide by zero, but I am not sure. After all, there is no need for notmalizing a vector of 0.0f length, right?
+        // I believe that this if statement should fix the issue with accidentally making a vec2 of Nan values.
+        // Most likely it was a way not to divide by zero, but I am not sure. After all, there is no need for
+        // normalizing a vector of 0.0f length, right?
         if (!(x == 0.0f && y ==0.0f))
         {
             movement = glm::normalize(glm::vec2{x, y});
@@ -66,6 +69,7 @@ private:
     std::map<std::string, RenderMesh*> m_RenderMeshes;
     Map* m_Map = nullptr;
     std::vector<Enemy> m_Enemies{};
+    EnemyManager m_EnemyManager;
     std::vector<Projectile> m_Projectiles{};
     std::vector<Loot> m_Loot{};
     MovementInput m_MovementInput;
@@ -78,16 +82,13 @@ public:
     Game();
     ~Game();
 
-    void Draw();
+    void Draw() const;
     void Simulate();
     SDL_AppResult HandleEvent(SDL_Event* event);
     void FinishFrameTracking();
 
-    inline void SetPlayerInput() { m_Player->SetMovementInputForce(m_MovementInput.movement); }
+    inline void SetPlayerInput() const { m_Player->SetMovementInputForce(m_MovementInput.movement); }
     inline void StartFrameTracking() { m_DeltaTimeMeasureStart = SDL_GetTicks(); }
-private:
-    void PopulateMapWithEnemies();
-    bool IsEnemyInPlayerRange();
 };
 
 #endif //GAME_H

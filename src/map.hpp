@@ -4,7 +4,6 @@
 #include <map>
 #include <vector>
 #include <glm/glm.hpp>
-#include "renderer/render_mesh.hpp"
 #include "map_position.hpp"
 #include "environment.hpp"
 #include "player.hpp"
@@ -25,12 +24,12 @@ private:
     std::map<MapPosition, Room> m_Rooms;
 public:
     Map();
-    ~Map();
+    ~Map() = default;
 
     void DisplayFloorAndWall(Player& player, Renderer& renderer);
     void RegisterNewEnvironment(unsigned int id, Environment&& environment);
     void GenerateNewMap();
-    std::vector<Enemy> PopulateMapWithEnemies(double percentage, RenderMesh* enemyRenderMesh);
+    std::vector<glm::vec2> PopulateMapWithEnemies(double percentage);
 
     inline bool ShouldPlayerRelocate() { return m_RelocatePlayer; }
     inline glm::vec2 GetPlayerStartLocation() { m_RelocatePlayer = false; return m_RelocatePlayerLocation; }
