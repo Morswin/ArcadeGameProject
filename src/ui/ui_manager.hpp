@@ -11,11 +11,10 @@ private:
     int m_LastKnownFPS{0};
     float m_PlayerHealth{0.0f};
 public:
-    UIManager() = default;
+    UIManager();
     ~UIManager() noexcept;
 
     void UseWindows() const;
-
     void RegisterNewWindow(UIWindow* window) { m_Windows.push_back(window); }
 
     inline void UpdateLastKnownFPS(const int fps) { m_LastKnownFPS = fps; }

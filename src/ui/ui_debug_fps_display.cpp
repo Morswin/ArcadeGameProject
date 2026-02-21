@@ -4,29 +4,20 @@
 #include <string>
 #include "../third_party/imgui/imgui.h"
 
-UIDebugFPSDisplay::UIDebugFPSDisplay()
-    : UIWindow()
-{
-}
-
-UIDebugFPSDisplay::~UIDebugFPSDisplay() noexcept
+UIDebugFPSDisplay::UIDebugFPSDisplay(const std::string& window_name)
+    : UIWindow(window_name)
 {
 }
 
 void UIDebugFPSDisplay::operator()()
 {
-    this->operator()(0, false);
+    this->operator()(0);
 }
 
-void UIDebugFPSDisplay::operator()(int fps_value, bool provided)
+void UIDebugFPSDisplay::operator()(int fps_value) const
 {
-    if (provided) ImGui::SetNextWindowPos(ImVec2(0.0f, 30.0f), ImGuiCond_Always);
-    if (provided && ImGui::Begin("Debug FPS", &m_WindowOpen, m_WindowFlags))
-    {
-        std::stringstream ss;
-        ss << "FPS: " << fps_value;
-        ImGui::Text("%s", ss.str().c_str());
-    }
-    ImGui::End();
+    std::stringstream ss;
+    ss << "FPS: " << fps_value;
+    ImGui::Text("%s", ss.str().c_str());
 }
 

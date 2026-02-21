@@ -5,9 +5,6 @@
 #include <glad/glad.h>
 #include "utils/sdl_error.hpp"
 #include "utils/rng.hpp"
-#include "ui/ui_debug_fps_display.hpp"
-#include "ui/ui_player_statistics.hpp"
-#include "ui/ui_manager.hpp"
 #include "third_party/imgui/imgui.h"
 #include "third_party/imgui/imgui_impl_sdl3.h"
 #include "third_party/imgui/imgui_impl_opengl3.h"
@@ -86,7 +83,7 @@ Game::Game() : m_Player(new Player(2, 1))
     m_RenderMeshes["food"] = new RenderMesh(vertices, 20, elements, 6, "resources/food.png", 8, 8);
     m_RenderMeshes["characters"] = new RenderMesh(vertices, 20, elements, 6, "resources/characters.png", 5, 2);
     m_RenderMeshes["dungeon"] = new RenderMesh(vertices, 20, elements, 6, "resources/dungeon.png", 4, 4);
-    m_RenderMeshes["dungeon_autotile"] = new RenderMesh(vertices, 20, elements, 6, "resources/dungeon_autotile.png", 3, 4);
+    m_RenderMeshes["dungeon_auto-tile"] = new RenderMesh(vertices, 20, elements, 6, "resources/dungeon_auto-tile.png", 3, 4);
     m_RenderMeshes["projectile"] = new RenderMesh(vertices, 20, elements, 6, "resources/projectile.png", 1, 1);
 
     // Initializing Player
@@ -96,7 +93,7 @@ Game::Game() : m_Player(new Player(2, 1))
     m_Map = new Map();
     m_Map->RegisterNewEnvironment(0, Floor(1, 3, m_RenderMeshes["dungeon"]));
     m_Map->RegisterNewEnvironment(1, Floor(3, 3, m_RenderMeshes["dungeon"]));
-    m_Map->RegisterNewEnvironment(10, Wall(0, 3, m_RenderMeshes["dungeon_autotile"]));
+    m_Map->RegisterNewEnvironment(10, Wall(0, 3, m_RenderMeshes["dungeon_auto-tile"]));
 
     if (m_Map->ShouldPlayerRelocate())
     {
@@ -131,22 +128,6 @@ Game::Game() : m_Player(new Player(2, 1))
     imgui_io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     ImGui_ImplSDL3_InitForOpenGL(m_Window, m_glContext);
     ImGui_ImplOpenGL3_Init();
-
-    auto* player_statistics = new UIPlayerStatistics();
-    player_statistics->AddFlag(ImGuiWindowFlags_NoTitleBar);
-    player_statistics->AddFlag(ImGuiWindowFlags_NoBackground);
-    player_statistics->AddFlag(ImGuiWindowFlags_NoResize);
-    player_statistics->AddFlag(ImGuiWindowFlags_NoMove);
-    player_statistics->AddFlag(ImGuiWindowFlags_AlwaysAutoResize);
-    m_UIManager.RegisterNewWindow(player_statistics);
-    auto* debug_fps_display = new UIDebugFPSDisplay();
-    debug_fps_display->AddFlag(ImGuiWindowFlags_NoTitleBar);
-    debug_fps_display->AddFlag(ImGuiWindowFlags_NoBackground);
-    debug_fps_display->AddFlag(ImGuiWindowFlags_NoResize);
-    debug_fps_display->AddFlag(ImGuiWindowFlags_NoDocking);
-    debug_fps_display->AddFlag(ImGuiWindowFlags_NoMove);
-    debug_fps_display->AddFlag(ImGuiWindowFlags_AlwaysAutoResize);
-    m_UIManager.RegisterNewWindow(debug_fps_display);
 }
 
 Game::~Game()
@@ -159,7 +140,7 @@ Game::~Game()
     delete m_RenderMeshes["food"];
     delete m_RenderMeshes["characters"];
     delete m_RenderMeshes["dungeon"];
-    delete m_RenderMeshes["dungeon_autotile"];
+    delete m_RenderMeshes["dungeon_auto-tile"];
     delete m_Player;
     delete m_Map;
     delete m_Renderer;
@@ -360,7 +341,7 @@ SDL_AppResult Game::HandleEvent(SDL_Event* event)
     default:
         return SDL_APP_CONTINUE;
     }
-    // For now I don't see a reason to handle the default.
+    // For now, I don't see a reason to handle the default.
     // I only want to handle specific events. Not all of them.
     return SDL_APP_CONTINUE;
 }
