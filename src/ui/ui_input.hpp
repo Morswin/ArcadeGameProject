@@ -5,7 +5,6 @@
 
 #include <string>
 
-template<typename T>
 class UIInput : public UIWindow
 {
 protected:
@@ -13,10 +12,6 @@ protected:
 public:
     explicit UIInput(const std::string& window_name, const std::string& label);
     ~UIInput() noexcept override = default;
-
-    virtual T ReceiveData() = 0;
 };
-
-template class UIInput<bool>;
 
 #endif //UI_INPUT_HPP

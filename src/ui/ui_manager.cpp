@@ -2,7 +2,7 @@
 
 #include "ui_debug_fps_display.hpp"
 #include "ui_player_statistics.hpp"
-#include "ui_button.hpp"
+// #include "ui_button.hpp"
 
 UIManager::UIManager()
 {
@@ -21,14 +21,14 @@ UIManager::UIManager()
     debug_fps_display->AddFlag(ImGuiWindowFlags_NoMove);
     debug_fps_display->AddFlag(ImGuiWindowFlags_AlwaysAutoResize);
     RegisterNewWindow(debug_fps_display);
-    auto* button = new UIButton("Test Button", "Click me!");
-    button->AddFlag(ImGuiWindowFlags_NoTitleBar);
-    button->AddFlag(ImGuiWindowFlags_NoBackground);
-    button->AddFlag(ImGuiWindowFlags_NoResize);
-    button->AddFlag(ImGuiWindowFlags_NoDocking);
-    button->AddFlag(ImGuiWindowFlags_NoMove);
-    button->AddFlag(ImGuiWindowFlags_AlwaysAutoResize);
-    RegisterNewWindow(button);
+    // auto* button = new UIButton("Test Button", "Click me!");
+    // button->AddFlag(ImGuiWindowFlags_NoTitleBar);
+    // button->AddFlag(ImGuiWindowFlags_NoBackground);
+    // button->AddFlag(ImGuiWindowFlags_NoResize);
+    // button->AddFlag(ImGuiWindowFlags_NoDocking);
+    // button->AddFlag(ImGuiWindowFlags_NoMove);
+    // button->AddFlag(ImGuiWindowFlags_AlwaysAutoResize);
+    // RegisterNewWindow(button);
 }
 
 UIManager::~UIManager() noexcept

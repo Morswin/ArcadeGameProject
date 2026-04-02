@@ -8,12 +8,10 @@ UIButton::UIButton(const std::string& window_name, const std::string& label)
 {
 }
 
-bool UIButton::ReceiveData() {
-    return m_Value;
-}
 
 void UIButton::operator()()
 {
+    SDL_Log("%d\n", m_Value);
     if (ImGui::Button(m_Label.c_str()))
     {
         m_Value = true;

@@ -1,21 +1,17 @@
 #include "enemy_manager.hpp"
 
+#include <algorithm>
+#include <ranges>
 #include "utils/rng.hpp"
 
 std::vector<glm::vec2> EnemyManager::Simulate(float deltaTime, const std::map<MapPosition, unsigned int> &mapData , Player* player)
 {
+    auto _loot_view = m_Enemies | std::ranges::views::filter([](const Enemy& enemy){return !enemy.IsAlive();})
+        | std::ranges::views::filter([](const Enemy& enemy){return RNG::GetRNG().GetNextInt(0, 10) <= 4;})
+        | std::ranges::views::transform([](const Enemy& enemy){return enemy.GetTransform().GetPosition();});
     std::vector<glm::vec2> _loot_positions;
-    for (const Enemy& _enemy : m_Enemies)
-    {
-        if (!_enemy.IsAlive() && RNG::GetRNG().GetNextInt(0, 10) <= 4) {
-            _loot_positions.push_back(_enemy.GetTransform().GetPosition());
-            // Loot _loot(m_RenderMeshes["food"]);
-            // _loot.GetTransform().SetPosition(_enemy.GetTransform().GetPosition());
-            // m_Loot.push_back(_loot);
-        }
-    }
-    std::erase_if(m_Enemies, [](const Enemy& _enemy)
-    {
+    std::ranges::copy(_loot_view, std::back_inserter(_loot_positions));
+    std::erase_if(m_Enemies, [](const Enemy& _enemy) {
         return !_enemy.IsAlive();
     });
     for (Enemy& _enemy : m_Enemies)
@@ -31,10 +27,10 @@ std::vector<glm::vec2> EnemyManager::Simulate(float deltaTime, const std::map<Ma
 
 void EnemyManager::Draw(const Renderer *renderer, const Player *player) const
 {
-    for (const Enemy& _enemy : m_Enemies)
-    {
-        _enemy.Display(*renderer, player->GetViewMatrix());
-    }
+    auto _display_all = [&](const Enemy& enemy) {
+        enemy.Display(*renderer, player->GetViewMatrix());
+    };
+    std::ranges::for_each(m_Enemies, _display_all);
 }
 
 void EnemyManager::RegisterEnemyPrefabricate(const EnemyPrefabricate& enemy_prefabricate)
@@ -45,31 +41,25 @@ void EnemyManager::RegisterEnemyPrefabricate(const EnemyPrefabricate& enemy_pref
 bool EnemyManager::IsEnemyInPlayerRange(Player *player) const
 {
     const float _rangeSq = std::pow(player->GetRange(), 2);
-    for (const Enemy& _enemy : m_Enemies)
-    {
-        if (!_enemy.IsAlive()) continue;
-        const glm::vec2 _delta = _enemy.GetTransform().GetPosition() - player->GetTransform().GetPosition();
-        if (glm::dot(_delta, _delta) <= _rangeSq)
-        {
-            return true;
-        }
-    }
-    return false;
+    auto _enemy_in_range = [&](const Enemy& enemy) {
+        const glm::vec2 _delta = enemy.GetTransform().GetPosition() - player->GetTransform().GetPosition();
+        return glm::dot(_delta, _delta) <= _rangeSq;
+    };
+    auto _enemies_in_range = m_Enemies | std::ranges::views::filter(&Enemy::IsAlive);
+    return std::ranges::any_of(_enemies_in_range ,_enemy_in_range);
 }
 
 void EnemyManager::PopulateMapWithEnemies(Map *map, Player* player, RenderMesh* render_mesh)
 {
     ClearEnemies();
     std::vector<glm::vec2> _enemy_positions = map->PopulateMapWithEnemies(0.2);
-    for (glm::vec2 _position : _enemy_positions)
-    {
-        int _enemy_index = RNG::GetRNG().GetNextInt(0, m_Prefabricates.size() - 1);
+    auto _create_enemy_at_position = [&](glm::vec2 position) {
+        const int _enemy_index = RNG::GetRNG().GetNextInt(0, m_Prefabricates.size() - 1);
         Enemy _enemy(m_Prefabricates.at(_enemy_index));
-        // Enemy _enemy(m_Prefabricates.at(_enemy_index).GetSpriteColumn(), m_Prefabricates.at(_enemy_index).GetSpriteRow());
-        // _enemy.SetMesh(m_Prefabricates.at(_enemy_index).GetRenderMesh());
-        _enemy.GetTransform().SetPosition(_position);
+        _enemy.GetTransform().SetPosition(position);
         m_Enemies.push_back(_enemy);
-    }
+    };
+    std::ranges::for_each(_enemy_positions, _create_enemy_at_position);
     std::erase_if(m_Enemies, [&](const Enemy& _enemy)
     {
         const float _difference = glm::distance(_enemy.GetTransform().GetPosition(), player->GetTransform().GetPosition());
